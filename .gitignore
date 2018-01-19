@@ -4,3 +4,6 @@
 gc_SP2018.E81.CSE.132.01_studinfo_2018-01-18-16-06-32.csv
 Studio0(1-61).xlsx
 ~$Studio0(1-61).xlsx
+*.pyc
+jsontemp
+new_roster.json
