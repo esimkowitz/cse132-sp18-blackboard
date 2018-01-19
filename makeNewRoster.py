@@ -27,9 +27,9 @@ def addSectionRoster(student_dict, roster_path, section_letter):
 
         reader = csv.reader(csvfile, delimiter=',', quotechar='\"')
         for row in reader:
-            student_dict[row[3]] = {
+            student_dict[row[2]] = {
                 "name": [row[0], row[1]],
-                "wk": row[2],
+                "id": row[3],
                 "section": section_letter,
             }
 

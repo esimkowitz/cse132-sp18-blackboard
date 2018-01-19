@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import sys, os, csv, json, re, httplib2, xlrd
+sys.path.insert(0, 'xlsx-to-json')
+
+from xlstojson import xlstojson
 from datetime import datetime as dt
 from datetime import date
 from student import Student
@@ -10,18 +13,19 @@ from grade import Grade
 constants = Constants()
 extsMap = constants.pointsMap
 labCutoffs = constants.labCutoffs
+gradebook_columns = {}
 
 # FIXME: we just want to map WUSTL Key to WUSTL Key
 def getKeyToUUID():
 	#Load dictionary mapping WUSTL key to Schoology UUID
-	with open( 'uniqueidmap.csv' ) as mapFile:
-		mapLines = mapFile.read().splitlines()
-	mapLines = map( lambda x: tuple( x.split( ',' ) ), mapLines )
-	UUIDmap = {}
-	for uuid, key in mapLines:
-		UUIDmap[key.lower()] = uuid
-	
-	return key.lower()
+	with open( 'roster.json' ) as roster_file:
+		roster = json.load(roster_file)
+        # mapLines = map( lambda x: tuple( x.split( ',' ) ), mapLines )
+        UUIDmap = {}
+        for key in roster:
+            UUIDmap[key.lower()] = key.lower()
+        
+        return UUIDmap
 
 def readWriteData( fileName ):
 	#Turn CSV file into JSON file
@@ -38,25 +42,10 @@ def readWriteData( fileName ):
 		sys.exit( 0 )
 
 def readWriteDataExcel( fileName ):
-	#Turn CSV file into JSON file
-	# try:
-		
-	# try:
-	with xlrd.open_workbook(fileName) as xl_workbook:
-		with open( "jsontemp", 'w' ) as jsonfile:
-			grades = xl_workbook.sheet_by_index(0)
-			# reader = csv.DictReader(grades)
-			for row_num in range(0, grades.nrows):
-				print grades.row(row_num)
-				# json.dump( row, jsonfile )
-				# jsonfile.write( "\n" )
-			return jsonfile.name
-	# except:
-	# 	print "Invalid file name"
-	# 	sys.exit( 0 )
-	# except:
-	# 	print "Invalid file name"
-	# 	sys.exit( 0 )
+	#Turn xls file into JSON file
+    file_path = os.path.realpath(fileName)
+	return xlstojson(file_path)
+	
 
 def process( thing, fileName ):
 	#Initialize empty dict of students, to be filled from JSON file
@@ -64,9 +53,11 @@ def process( thing, fileName ):
 	studentDict = {}
 	uuidMap = getKeyToUUID()
 	#Open JSON file
-	jsonFile = readWriteData( fileName )
+    jsonFile = readWriteDataExcel(fileName)["sheet1"]
+	# jsonFile = readWriteData( fileName )
 	print "Building initial data structure"
 	with open( jsonFile, 'r' ) as f:
+
 		for row in f:
 			#Get data from JSON encoded file created by readWriteData
 			data = json.loads( row )
@@ -190,13 +181,13 @@ def doStudios( studentDict ):
 
 if __name__ == "__main__":
 	print "Running"
-	readWriteDataExcel("Studio0(1-61).xlsx")
+	# readWriteDataExcel("Studio0(1-61).xlsx")
 
-	# args = sys.argv[1::]
-	# if not len( args ) is 2:
-	# 	print "Use two arguments"
-	# 	sys.exit( 0 )
-	# process( args[0], args[1] ) #arg 0 = studio | lab | ext | blah, arg 1 = file to be processed
+	args = sys.argv[1::]
+	if not len( args ) is 2:
+		print "Use two arguments"
+		sys.exit( 0 )
+	process( args[0], args[1] ) #arg 0 = studio | lab | ext | blah, arg 1 = file to be processed
 
 def doQuizzes( studentDict ):
 	pass
