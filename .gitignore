@@ -14,3 +14,6 @@ Studio 0(1-61).json
 Studio 0(1-61).xlsx
 studiogrades.csv
 gradebook.json
+*.json
+*.xlsx
+*.csv
