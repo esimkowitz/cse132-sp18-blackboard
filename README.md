@@ -9,9 +9,9 @@
 
 ## TODO
 
-[] output the Blackboard-compatible CSVs
-[] add studios to columnid constants
-[] fix maxScores to account for assignments with extra credit
-[] write the code to dump all the student grades/late passes to the gradebook file.
-[] fix weird IOError bug
-[] support the different deadlines for different sections, factor into late pass calculation
+- output the Blackboard-compatible CSVs
+- add studios to columnid constants
+- fix maxScores to account for assignments with extra credit
+- write the code to dump all the student grades/late passes to the gradebook file.
+- fix weird IOError bug
+- support the different deadlines for different sections, factor into late pass calculation
