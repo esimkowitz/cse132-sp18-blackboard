@@ -79,7 +79,19 @@ class Constants:
                     "Assignment 10"	:	"1271866",
                     "Assignment 11"	:	"1271865",
                     "Assignment 12" :   "1271864",
-                    "Assignment 0"  :   "0000000"
+                    "Assignment 0"  :   "0000000",
+                    "Studio 0"      :   "1272336",
+                    "Studio 1"      :   "1272335",
+                    "Studio 2"      :   "1272334",
+                    "Studio 3"      :   "1272333",
+                    "Studio 4"      :   "1272332",
+                    "Studio 5"      :   "1272331",
+                    "Studio 6"      :   "1272330",
+                    "Studio 7"      :   "1272329",
+                    "Studio 8"      :   "1272328",
+                    "Studio 10"     :   "1272327",
+                    "Studio 11"     :   "1272326",
+                    "Studio 12"     :   "1272325"
     }
 
     maxScore = {
