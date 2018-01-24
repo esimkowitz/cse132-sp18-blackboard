@@ -60,7 +60,7 @@ def makeNewRoster(section_a_path, section_b_path, section_c_path, output_path):
 
 if __name__ == '__main__':
     parser = ArgumentParser(
-        description='Generate a regular expression of all students\' WUSTLKeys in a class roster.')
+        description='Generate a roster complete with section names, given rosters for each section.')
     # parser.add_argument("--roster", dest="filepath", required=True,
     #                     help="path to class roster CSV", metavar="FILE",
     #                     type=lambda x: is_valid_file(parser, x))

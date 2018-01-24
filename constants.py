@@ -79,5 +79,53 @@ class Constants:
                     "Assignment 10"	:	"1271866",
                     "Assignment 11"	:	"1271865",
                     "Assignment 12" :   "1271864",
-                    "Assignment 0" :   "0000000"
+                    "Assignment 0"  :   "0000000"
     }
+
+    maxScore = {
+                    "Assignment 1"	:	100.0,
+                    "Assignment 2"	:	100.0,
+                    "Assignment 3"	:	100.0,
+                    "Assignment 5"	:	100.0,
+                    "Assignment 6"	:	100.0,
+                    "Assignment 7"	:	100.0,
+                    "Assignment 8"	:	100.0,
+                    "Assignment 10"	:	100.0,
+                    "Assignment 11"	:	100.0,
+                    "Assignment 12" :   100.0,
+                    "Assignment 0"  :   0.0
+    }
+
+    # Constants relating to parsing lab grade submissions
+    labPartnerFields = ["partner_1_student_id_(6_digit_number)", "partner_2_student_id_(6_digit_number)"]
+    labWorkingWithPartner = "are_they_working_with_a_partner?"
+    labCommitToGithub = "commit_to_github"
+    labTAName = "ta_name"
+    labStartTime = "start_time"
+    labNonGradingFields = {
+        "partner_1_wustl_key",
+        "partner_2_wustl_key", 
+        "completion_time", 
+        "ta_name", 
+        "email", 
+        "are_they_working_with_a_partner?", 
+        "commit_to_github",
+        "start_time",
+        "name"
+    }
+
+    # Constants relating to parsing studio submissions
+    studioPartnerFields = ["student_one_student_id_(6_digit_number)", "student_two_student_id_(6_digit_number)", "student_three_student_id_(6_digit_number)", "student_four_student_id_(6_digit_number)"]
+    studioTAName = "ta_name"
+    studioStartTime = "start_time"
+    # labNonGradingFields = {
+    #     "partner_1_wustl_key",
+    #     "partner_2_wustl_key", 
+    #     "completion_time", 
+    #     "ta_name", 
+    #     "email", 
+    #     "are_they_working_with_a_partner?", 
+    #     "commit_to_github",
+    #     "start_time",
+    #     "name"
+    # }
