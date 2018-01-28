@@ -73,7 +73,6 @@ def process( mode, form_results, roster, gradebook ):
             student_dict_B[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
         elif( roster_file[key]["section"] == "c" ):
             student_dict_C[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
-
     try:
         gradebook_json = json.load(gradebook)
         loadGrades(student_dict, gradebook_json, uuid_map)
