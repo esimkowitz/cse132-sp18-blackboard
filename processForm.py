@@ -14,9 +14,14 @@ from shutil import copyfile
 constants = Constants()
 extsMap = constants.pointsMap
 lab_cutoffs = constants.labCutoffs
+lab_cutoffs_secA = constants.labCutoffsSecA
+lab_cutoffs_secB = constants.labCutoffsSecB
+lab_cutoffs_secC = constants.labCutoffsSecC
 gradebook_columns = {}
-
-
+#figure out which labs have extra credit
+labsWithExtraCredit = []
+labGrades = []
+studioGrades = []
 
 # FIXME: we just want to map WUSTL Key to WUSTL Key
 def getKeyToUUID(roster_path):
@@ -27,7 +32,6 @@ def getKeyToUUID(roster_path):
         uuid_map = {}
         for key in roster:
             uuid_map[key.lower()] = roster[key]["wk"]
-        
         return uuid_map
 
 def readWriteData( file_name ):
@@ -54,14 +58,21 @@ def process( mode, form_results, roster, gradebook ):
     #Initialize empty dict of students, to be filled from JSON file
     count = 0
     student_dict = {}
+    student_dict_A = {}
+    student_dict_B = {}
+    student_dict_C = {}
     uuid_map = getKeyToUUID(roster.name)
     #Open JSON file
     roster_file = json.load(roster)
-
+    #add all students to student_dict, add each student to their own section's student_dict
     for key in roster_file:
         student_dict[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
-    # for student in student_dict: 
-    #     print str(student)
+        if( roster_file[key]["section"] == "a" ):
+            student_dict_A[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
+        elif( roster_file[key]["section"] == "b" ):
+            student_dict_B[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
+        elif( roster_file[key]["section"] == "c" ):
+            student_dict_C[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
 
     try:
         gradebook_json = json.load(gradebook)
@@ -131,7 +142,8 @@ def process( mode, form_results, roster, gradebook ):
     form_results_json = json.load(open(form_results_json_path, 'r'))['sheet1']
     if mode == "labs":
         print "Doing labs"
-        doLabs( student_dict, form_name, form_results_json, uuid_map )
+        #pass in each section's student dict as well as total
+        doLabs( student_dict, form_name, form_results_json, uuid_map, student_dict_A, student_dict_B, student_dict_C )
     elif mode == "studios":
         print "Doing studios"
         doStudios( student_dict, form_name, form_results_json, uuid_map )
@@ -146,7 +158,7 @@ def loadGrades( student_dict, grade_dict, uuid_map ):
             student_dict[student_uuid].addGrade(grade["name"], grade["points"], grade["kind"], grade["timestamp"])
         student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])
 
-def doLabs( student_dict, lab_name, form_results, uuid_map ):
+def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C ):
     #Calculate late coupon usage
     # print form_results[0]
 
@@ -171,8 +183,10 @@ def doLabs( student_dict, lab_name, form_results, uuid_map ):
             score -= 1
         print "Score for " + str(partners) + " is " + str(score)
         if score > constants.maxScore[lab_name]:
-            print "ERROR: Invalid score for this assignment. Check that your non-grading fields are correct."
-            sys.exit(1)
+            #make this a thing ~~~~~~~~~~
+            if not labsWithExtraCredit[lab_name]:
+                print "ERROR: Invalid score for this assignment. Check that your non-grading fields are correct."
+                sys.exit(1)
 
         time_string = entry[constants.labStartTime]
 
@@ -188,10 +202,24 @@ def doLabs( student_dict, lab_name, form_results, uuid_map ):
     # Process late labs
     for k in student_dict.iterkeys():
         cur_student = student_dict[k]
+        cur_section = ""
+        if ( k in student_dict_A.keys() ):
+            cur_section = "a"
+        elif ( k in student_dict_B.keys() ):
+            cur_section = "b"
+        elif ( k in student_dict_C.keys() ):
+            cur_section = "c"
         num_lates = cur_student.getLates()
         labs = cur_student.getLabs()
+        #get student's section here 
         for lab in labs:
             lab_deadline = lab_cutoffs[lab]
+            if ( cur_section is "a" ):
+                lab_deadline = lab_cutoffs_secA
+            elif ( cur_section is "b" ):
+                lab_deadline = lab_cutoffs_secB
+            elif (cur_section is "c" ):
+                lab_deadline = lab_cutoffs_secC
             lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
             if lab_sub_time > lab_deadline:
                 if ( lab_sub_time - lab_deadline ).days > 7:
@@ -220,6 +248,7 @@ def doLabs( student_dict, lab_name, form_results, uuid_map ):
                 student_data_row.append( 0 )
         student_data_row.append( cur_student.getLates() )
         csv_data.append( student_data_row )
+    labGrades = csv_data
     #Write lab CSV file
     with open( "labgrades.csv", "w" ) as f:
         print "Writing labgrades.csv"
@@ -282,6 +311,7 @@ def doStudios( student_dict, studio_name, form_results, uuid_map ):
             else:
                 student_data_row.append( 0 )
         csv_data.append( student_data_row )
+    studioGrades = csv_data
     #Write studio CSV file
     with open( "studiogrades.csv", "w" ) as f:
         print "Writing studiogrades.csv"
@@ -295,6 +325,13 @@ def maybe_new_file(file_path):
     else:
         return open(file_path, 'w')
 
+def makeGradeBook( labGrades, studioGrades ):
+    with open("allgrades.csv", "w") as f:
+        print "Writing lab and studio grades"
+        csv_writer = csv.writer( f, delimiter =",")
+        csv_writer.writerows(labGrades)
+        csv_writer.writerows(studioGrades)
+        print "done writing studio and lab grades"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
