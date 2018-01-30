@@ -224,9 +224,11 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                 if ( lab_sub_time - lab_deadline ).days > 7:
                     student_dict[k].grades[lab].setPoints( 0 )
                 else:
-                    if num_lates < 3:
+                    #add this number to gradebook, so student can see how many
+                    if num_lates < 2:
                         num_lates += 1
                     else:
+                        #maybe get rid of 
                         num_lates += 1
                         student_dict[k].grades[lab].setPoints( 0 )
         student_dict[k].setLates( num_lates )
