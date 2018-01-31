@@ -1,59 +1,5 @@
 from datetime import datetime
 class Constants:
-    pointsMap = {	"1.1"	:	3,
-                    "1.2"	:	6,
-                    "1.3"	:	4,
-                    "1.4"	:	3,
-                    "1.5"	:	4,
-                    "2.1"	:	6,
-                    "2.2"	:	3,
-                    "2.3"	:	5,
-                    "2.4"	:	4,
-                    "2.5"	:	4,
-                    "3.1"	:	3,
-                    "3.2"	:	5,
-                    "3.3"	:	2,
-                    "3.4"	:	10,
-                    "3.5"	:	5,
-                    "3.6"	:	7,
-                    "3.7"	:	8,
-                    "4.1"	:	6,
-                    "4.2"	:	10,
-                    "4.3"	:	2,
-                    "4.4"	:	7,
-                    "4.5"	:	10,
-                    "4.6"	:	5,
-                    "4.7"	:	2,
-                    "4.8"	:	3,
-                    "4.9"	:	5,
-                    "4.10"	:	2,
-                    "5.1"	:	3,
-                    "5.2"	:	3,
-                    "5.3"	:	5,
-                    "5.4"	:	8,
-                    "5.5"	:	5,
-                    "5.6"	:	7,
-                    "5.7"	:	7,
-                    "5.8"	:	5,
-                    "5.9"	:	3,
-                    "6.1"	:	5,
-                    "6.2"	:	10,
-                    "6.3"	:	4,
-                    "6.4"	:	5,
-                    "7.1"	:	8,
-                    "7.2"	:	3,
-                    "7.3"	:	5,
-                    "7.4"	:	6,
-                    "7.5"	:	9,
-                    "7.6"	:	4,
-                    "7.7"	:	8,
-                    "8.1"	:	5,
-                    "9.1"	:	4,
-                    "9.2"	:	3,
-                    "9.3"	:	12,
-                    "9.4"	:	10,
-                    "9.5"	:	5,
-    }
 
     labCutoffs = {	"Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
                     "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
@@ -151,7 +97,7 @@ class Constants:
     }
 
     # Constants relating to parsing lab grade submissions
-    labPartnerFields = ["partner_1_student_id_(6_digit_number)", "partner_2_student_id_(6_digit_number)"]
+    labPartnerFields = [["partner_1_student_id_(6_digit_number)", "partner_1_wustl_id_(the_6_digit_number)"], ["partner_2_student_id_(6_digit_number)", "partner_2_wustl_id_(the_6-digit_number)"]]
     labWorkingWithPartner = "are_they_working_with_a_partner?"
     labCommitToGithub = "commit_to_github"
     labTAName = "ta_name"
@@ -159,11 +105,16 @@ class Constants:
     labNonGradingFields = {
         "partner_1_wustl_key",
         "partner_2_wustl_key", 
+        "partner_1_student_id_(6_digit_number)", 
+        "partner_1_wustl_id_(the_6_digit_number)", 
+        "partner_2_student_id_(6_digit_number)", 
+        "partner_2_wustl_id_(the_6-digit_number)",
         "completion_time", 
         "ta_name", 
         "email", 
         "are_they_working_with_a_partner?", 
         "commit_to_github",
+        "is_this_a_regrade?",
         "start_time",
         "name"
     }

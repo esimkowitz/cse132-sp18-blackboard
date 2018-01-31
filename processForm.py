@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, os, csv, json, re, httplib2, xlrd, argparse
+import sys, os, csv, json, re, httplib2, xlrd, argparse, time
 
 from xlstojson import xlstojson
 from datetime import datetime as dt
@@ -12,7 +12,6 @@ from shutil import copyfile
 
 #Load constants from constants.py
 constants = Constants()
-extsMap = constants.pointsMap
 lab_cutoffs = constants.labCutoffs
 lab_cutoffs_secA = constants.labCutoffsSecA
 lab_cutoffs_secB = constants.labCutoffsSecB
@@ -40,6 +39,7 @@ def readWriteData( file_name ):
         with open(file_name, 'r') as grades:
             with open("jsontemp", 'w') as form_results_json:
                 reader = csv.DictReader(grades)
+                form_results.seek()
                 for row in reader:
                     json.dump(row, form_results_json)
                     form_results_json.write("\n")
@@ -54,7 +54,7 @@ def readWriteDataExcel( file_name ):
     return xlstojson(file_path)
     
 
-def process( mode, form_results, roster, gradebook ):
+def process( mode, form_results, roster, gradebook_path ):
     #Initialize empty dict of students, to be filled from JSON file
     count = 0
     student_dict = {}
@@ -63,7 +63,11 @@ def process( mode, form_results, roster, gradebook ):
     student_dict_C = {}
     uuid_map = getKeyToUUID(roster.name)
     #Open JSON file
+    roster.seek(0)
+
     roster_file = json.load(roster)
+    roster.close()
+
     #add all students to student_dict, add each student to their own section's student_dict
     for key in roster_file:
         student_dict[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
@@ -73,16 +77,23 @@ def process( mode, form_results, roster, gradebook ):
             student_dict_B[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
         elif( roster_file[key]["section"] == "c" ):
             student_dict_C[roster_file[key]["wk"]] = Student(roster_file[key]["wk"], key)
-    try:
+    try:        
+        gradebook = open(gradebook_path, 'r')
         gradebook_json = json.load(gradebook)
+        gradebook.seek(0)
+        gradebook.close()
+        os.rename(gradebook_path, "old_gradebook_%i.json"%time.time())
         loadGrades(student_dict, gradebook_json, uuid_map)
-    except ValueError, IOError:
+    except IOError:
         print "Gradebook is empty, skipping loadGrades"
+    
+    gradebook = open(gradebook_path, 'w')
+
 
     form_results_json_path = readWriteDataExcel(form_results.name)
     # form_results_json = readWriteData( file_name )
 
-    regex = r"(?:CSE 132 (?P<semester>(?:SP|FL)[0-9]{2}) )?(?P<form_name>(?P<form_type>Assignment|Studio) [0-9]+)(?:\([0-9]+\-[0-9]+\)\.(?:xlsx|json|csv))"
+    regex = r"(?:CSE 132 (?P<semester>(?:SP|FL)[0-9]{2}) )?(?P<form_name>(?P<form_type>Assignment|Studio) [0-9]+)(?:\([0-9]+\-[0-9]+\))"
     match_result = re.search(regex, form_results_json_path)
     form_name = match_result.group('form_name')
     form_type = match_result.group('form_type')
@@ -138,7 +149,11 @@ def process( mode, form_results, roster, gradebook ):
     # 						pass
     # os.remove( form_results_json )
     #Do grading for right mode
-    form_results_json = json.load(open(form_results_json_path, 'r'))['sheet1']
+    form_results_file = open(form_results_json_path, 'r')
+    form_results_json = json.load(form_results_file)['sheet1']
+    form_results_file.seek(0)
+    gradebook.seek(0)
+    # print json.dumps(form_results_json)
     if mode == "labs":
         print "Doing labs"
         #pass in each section's student dict as well as total
@@ -149,12 +164,22 @@ def process( mode, form_results, roster, gradebook ):
     else:
         print "Invalid assignment type."
         sys.exit( 0 )
+    makeGradeBook(student_dict, gradebook)
+    gradebook.close()
+    form_results_file.close()
+
+
 
 def loadGrades( student_dict, grade_dict, uuid_map ):
     print "Loading grades from gradebook"
     for student_uuid in grade_dict:
         for grade in grade_dict[student_uuid]["grades"]:
-            student_dict[student_uuid].addGrade(grade["name"], grade["points"], grade["kind"], grade["timestamp"])
+            grade_obj = Grade(grade["name"], grade["points"], grade["kind"], grade["timestamp"], grade["grader"])
+            history = grade["history"]
+            for old_grade in history:
+                old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"], old_grade["timestamp"], old_grade["grader"])
+                grade_obj.addGrade(old_grade_obj)
+            student_dict[student_uuid].addGrade(grade_obj)
         student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])
 
 def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C ):
@@ -162,12 +187,29 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
     # print form_results[0]
 
     # Calculate grades for the lab grading form entries
-    for entry in form_results:
-        print entry
+    for i in range(0, len(form_results)):
+        entry = form_results[i]
+        # print entry
         partners = []
-        partners.append(entry[constants.labPartnerFields[0]])
-        if entry[constants.labWorkingWithPartner] is "Yes":
-            partners.append(entry[constants.labPartnerFields[1]])
+        for const in constants.labPartnerFields[0]:
+            try:
+                partners.append(entry[const])
+                break
+            except KeyError:
+                pass
+
+        if len(partners) < 1:
+            print "Unable to find partner 1 for entry: " + json.dumps(entry)
+
+        if entry[constants.labWorkingWithPartner] == "Yes":
+            for const1 in constants.labPartnerFields[1]:
+                try:
+                    partners.append(entry[const1])
+                    break
+                except KeyError:
+                    pass
+            if len(partners) < 2:
+                print "Unable to find partner 2 for entry: " + json.dumps(entry)
 
         score = 0
         for key in entry:
@@ -180,12 +222,17 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
 
         if entry[constants.labCommitToGithub] != "True":
             score -= 1
-        print "Score for " + str(partners) + " is " + str(score)
+        partner_str = str(partners[0])
+        if len(partners) > 1:
+            partner_str += " and " + str(partners[1])
+        print "Score for %s is %f"%(partner_str, score)
+
+
         if score > constants.maxScore[lab_name]:
             #make this a thing ~~~~~~~~~~
-            if not labsWithExtraCredit[lab_name]:
-                print "ERROR: Invalid score for this assignment. Check that your non-grading fields are correct."
-                sys.exit(1)
+            # if not labsWithExtraCredit[lab_name]:
+            print "ERROR: Invalid score for this assignment. Check that your non-grading fields are correct."
+            sys.exit(1)
 
         time_string = entry[constants.labStartTime]
 
@@ -194,7 +241,9 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
         except ValueError:
             timestamp = dt.strptime( time_string, "%Y-%m-%dT%H:%M" )
         
-        grade = Grade(lab_name, score, "assignment", timestamp)
+        ta_name = entry[constants.labTAName]
+        
+        grade = Grade(lab_name, score, "assignment", timestamp, ta_name)
         for partner in partners:
             student_dict[uuid_map[partner]].addGrade(grade)
         
@@ -220,7 +269,9 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
             elif (cur_section is "c" ):
                 lab_deadline = lab_cutoffs_secC
             lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
-            if lab_sub_time > lab_deadline:
+            lab_is_regrade = cur_student.getGrades()[lab].getIsRegrade()
+
+            if lab_sub_time > lab_deadline and not lab_is_regrade:
                 if ( lab_sub_time - lab_deadline ).days > 7:
                     student_dict[k].grades[lab].setPoints( 0 )
                 else:
@@ -231,7 +282,9 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                         #maybe get rid of 
                         num_lates += 1
                         student_dict[k].grades[lab].setPoints( 0 )
-        student_dict[k].setLates( num_lates )
+        if num_lates > student_dict[k].getLates():
+            student_dict[k].setLates( num_lates )
+
     #Build lab CSV file for writing
     csv_data = []
     headers = [ "WUSTL Key", "Unique User ID" ] + list( lab_cutoffs.iterkeys() ) + [ "LateLabs" ]
@@ -289,7 +342,9 @@ def doStudios( student_dict, studio_name, form_results, uuid_map ):
         except ValueError:
             timestamp = dt.strptime( time_string, "%Y-%m-%dT%H:%M" )
         
-        grade = Grade(studio_name, 1, "studio", timestamp)
+        ta_name = entry[constants.studioTAName]
+
+        grade = Grade(studio_name, 1, "studio", timestamp, ta_name)
         for partner in partners:
             try:
                 student_dict[uuid_map[partner]].addGrade(grade)
@@ -326,13 +381,19 @@ def maybe_new_file(file_path):
     else:
         return open(file_path, 'w')
 
-def makeGradeBook( labGrades, studioGrades ):
-    with open("allgrades.csv", "w") as f:
-        print "Writing lab and studio grades"
-        csv_writer = csv.writer( f, delimiter =",")
-        csv_writer.writerows(labGrades)
-        csv_writer.writerows(studioGrades)
-        print "done writing studio and lab grades"
+def makeGradeBook( student_dict, gradebook ):
+    gradebook_output = {}
+    for student_id in student_dict:
+        student = student_dict[student_id]
+        student_output = { "grades": [], "lates": student.getLates()}
+        student_grades = student.getGrades()
+        for grade_key in student_grades:
+            student_output["grades"].append(student_grades[grade_key].output())
+        gradebook_output[student_id] = student_output
+    # print json.dumps(gradebook_output)
+    json.dump(gradebook_output, gradebook)
+            
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -348,7 +409,7 @@ if __name__ == "__main__":
                         type=argparse.FileType('r'))
     parser.add_argument("--gradebook", dest="gradebook_path",
                         help="Path to the class gradebook file", metavar="FILE", default="gradebook.json",
-                        type=maybe_new_file)
+                        type=str)
     args = parser.parse_args()
     process( args.type, args.input_path, args.roster_path, args.gradebook_path ) #arg 0 = studio | lab | ext | blah, arg 1 = file to be processed
 

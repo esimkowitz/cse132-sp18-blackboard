@@ -57,10 +57,12 @@ def getWorkBookData(workbook):
 def xlstojson(filename):
     workbook = xlrd.open_workbook(filename)
     workbookdata = getWorkBookData(workbook)
-    output = \
-    open((filename.replace("xlsx", "json")).replace("xls", "json"), "wb")
+    output = open((filename.replace("xlsx", "json")).replace("xls", "json"), "wb")
     output.write(json.dumps(workbookdata, sort_keys=True, indent=2,  separators=(',', ": ")))
+    output.seek(0)
     output.close()
+    workbook.release_resources()
+
     return output.name
 
 def main():
