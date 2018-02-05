@@ -9,9 +9,9 @@ class Grade:
             self.timestamp = timestamp
         else:
             try:
-                self.timestamp = datetime.datetime.strptime( timestamp, "%Y-%m-%dT%H:%M:%S" )
+                self.timestamp = datetime.datetime.strptime( timestamp, "%Y-%m-%d %H:%M:%S" )
             except ValueError:
-                self.timestamp = datetime.datetime.strptime( timestamp, "%Y-%m-%dT%H:%M" )
+                self.timestamp = datetime.datetime.strptime( timestamp, "%Y-%m-%d %H:%M" )
             except:
                 print "Error, unsupported type for timestamp: " + str(type(timestamp))
                 sys.exit(1)
