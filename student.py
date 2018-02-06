@@ -1,8 +1,10 @@
 class Student:
-    def __init__( self, wkey, uuid ):
+    def __init__( self, wkey, student_id ):
         self.grades = {}
-        self.info = ( wkey, uuid )
+        self.wkey = wkey
+        self.student_id = student_id
         self.lates = 0
+        self.section = None
 
     def addGrade( self, grade ):
         if not grade.name in self.grades.iterkeys():
@@ -11,15 +13,23 @@ class Student:
             self.grades[grade.name].regrade(grade)
         else:
             pass
+    def getSection( self ):
+        return self.section
 
     def getGrades( self ):
         return self.grades
 
-    def getInfo( self ):
-        return self.info
+    def getWKey( self ):
+        return self.wkey
+    
+    def getStudentID( self ):
+        return self.student_id
 
     def getLates( self ):
         return self.lates
+    
+    def setSection( self, section ):
+        self.section = section
 
     def setLates( self, numLates ):
         self.lates = numLates
@@ -35,4 +45,4 @@ class Student:
             print str( g )
 
     def __str__( self ):
-        return str( self.info ) + ":\n " + str( [ str(g) for g in self.getGrades() ] )
+        return  "(%s,%s)"%(str(self.wkey), str(self.student_id)) + ":\n " + str( [ str(g) for g in self.getGrades() ] )

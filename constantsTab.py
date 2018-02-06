@@ -1,148 +1,358 @@
 from datetime import datetime
 class Constants:
 
-    labCutoffs = {	"Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:45:00", "%b %d %Y %H:%M:%S" )
+    labCutoffs = {	
+        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:45:00", "%b %d %Y %H:%M:%S" )
     }
 
     #Section 1 cutoff at 2:40pm on lab due day, extra 10 min for leeway
-    labCutoffsSecA = { "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 1"	:	datetime.strptime( "Jan 31 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 2"	:	datetime.strptime( "Feb 07 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 3"	:	datetime.strptime( "Feb 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 5"	:	datetime.strptime( "Feb 28 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 6"	:	datetime.strptime( "Mar 06 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 7"	:	datetime.strptime( "Mar 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 8"	:	datetime.strptime( "Apr 04 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 10"	:	datetime.strptime( "Apr 11 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 11" :   datetime.strptime( "Apr 18 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 12" :   datetime.strptime( "Apr 25 2018 14:40:00", "%b %d %Y %H:%M:%S" )
+    labCutoffsSecA = { 
+        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 11" :   datetime.strptime( "Apr 18 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 12" :   datetime.strptime( "Apr 25 2018 14:40:00", "%b %d %Y %H:%M:%S" )
     }
 
     #Section 2 cutoff at 4:10pm on lab due day, extra 10 min for leeway
-    labCutoffsSecB = { "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 1"	:	datetime.strptime( "Jan 31 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 2"	:	datetime.strptime( "Feb 07 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 3"	:	datetime.strptime( "Feb 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 5"	:	datetime.strptime( "Feb 28 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 6"	:	datetime.strptime( "Mar 06 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 7"	:	datetime.strptime( "Mar 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 8"	:	datetime.strptime( "Apr 04 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 10"	:	datetime.strptime( "Apr 11 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 11" :   datetime.strptime( "Apr 18 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 12" :   datetime.strptime( "Apr 25 2018 16:10:00", "%b %d %Y %H:%M:%S" )
+    labCutoffsSecB = { 
+        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 11" :   datetime.strptime( "Apr 18 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 12" :   datetime.strptime( "Apr 25 2018 16:10:00", "%b %d %Y %H:%M:%S" )
     }
 
     #Section 3 cutoff at 5:40pm on lab due day, extra 10 min for leeway
-    labCutoffsSecC = { "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-                    "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S" )
+    labCutoffsSecC = { 
+        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
+        "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S" )
     }
 
     column_ids = {
-                    "Assignment 1"	:	"1271854",
-                    "Assignment 2"	:	"1271872",
-                    "Assignment 3"	:	"1271871",
-                    "Assignment 5"	:	"1271870",
-                    "Assignment 6"	:	"1271869",
-                    "Assignment 7"	:	"1271868",
-                    "Assignment 8"	:	"1271867",
-                    "Assignment 10"	:	"1271866",
-                    "Assignment 11"	:	"1271865",
-                    "Assignment 12" :   "1271864",
-                    "Assignment 0"  :   "0000000",
-                    "Studio 0"      :   "1272336",
-                    "Studio 1"      :   "1272335",
-                    "Studio 2"      :   "1272334",
-                    "Studio 3"      :   "1272333",
-                    "Studio 4"      :   "1272332",
-                    "Studio 5"      :   "1272331",
-                    "Studio 6"      :   "1272330",
-                    "Studio 7"      :   "1272329",
-                    "Studio 8"      :   "1272328",
-                    "Studio 10"     :   "1272327",
-                    "Studio 11"     :   "1272326",
-                    "Studio 12"     :   "1272325"
+        "Assignment 1"	:	"Assignment 1 [Total Pts: 100.00000 Score] |1271854",
+        "Assignment 2"	:	"Assignment 2 [Total Pts: 100.00000 Score] |1271872",
+        "Assignment 3"	:	"Assignment 3 [Total Pts: 100.00000 Score] |1271871",
+        "Assignment 5"	:	"Assignment 5 [Total Pts: 100.00000 Score] |1271870",
+        "Assignment 6"	:	"Assignment 6 [Total Pts: 100.00000 Score] |1271869",
+        "Assignment 7"	:	"Assignment 7 [Total Pts: 100.00000 Score] |1271868",
+        "Assignment 8"	:	"Assignment 8 [Total Pts: 100.00000 Score] |1271867",
+        "Assignment 10"	:	"Assignment 10 [Total Pts: 100.00000 Score] |1271866",
+        "Assignment 11"	:	"Assignment 11 [Total Pts: 100.00000 Score] |1271865",
+        "Assignment 12" :   "Assignment 12 [Total Pts: 100.00000 Score] |1271864",
+        "Assignment 0"  :   "0000000",
+        "Studio 0"      :   "Studio 0 [Total Pts: 1.00000 Score] |1272336",
+        "Studio 1"      :   "Studio 1 [Total Pts: 1.00000 Score] |1272335",
+        "Studio 2"      :   "Studio 2 [Total Pts: 1.00000 Score] |1272334",
+        "Studio 3"      :   "Studio 3 [Total Pts: 1.00000 Score] |1272333",
+        "Studio 4"      :   "Studio 4 [Total Pts: 1.00000 Score] |1272332",
+        "Studio 5"      :   "Studio 5 [Total Pts: 1.00000 Score] |1272331",
+        "Studio 6"      :   "Studio 6 [Total Pts: 1.00000 Score] |1272330",
+        "Studio 7"      :   "Studio 7 [Total Pts: 1.00000 Score] |1272329",
+        "Studio 8"      :   "Studio 8 [Total Pts: 1.00000 Score] |1272328",
+        "Studio 10"     :   "Studio 10 [Total Pts: 1.00000 Score] |1272327",
+        "Studio 11"     :   "Studio 11 [Total Pts: 1.00000 Score] |1272326",
+        "Studio 12"     :   "Studio 12 [Total Pts: 1.00000 Score] |1272325"
     }
 
     maxScore = {
-                    "Assignment 1"	:	100.0,
-                    "Assignment 2"	:	100.0,
-                    "Assignment 3"	:	100.0,
-                    "Assignment 5"	:	100.0,
-                    "Assignment 6"	:	100.0,
-                    "Assignment 7"	:	100.0,
-                    "Assignment 8"	:	100.0,
-                    "Assignment 10"	:	100.0,
-                    "Assignment 11"	:	100.0,
-                    "Assignment 12" :   100.0,
-                    "Assignment 0"  :   0.0
+        "Assignment 1"	:	100.0,
+        "Assignment 2"	:	100.0,
+        "Assignment 3"	:	100.0,
+        "Assignment 5"	:	100.0,
+        "Assignment 6"	:	100.0,
+        "Assignment 7"	:	100.0,
+        "Assignment 8"	:	100.0,
+        "Assignment 10"	:	100.0,
+        "Assignment 11"	:	100.0,
+        "Assignment 12" :   100.0,
+        "Assignment 0"  :   0.0
     }
+
 
     # Constants relating to parsing lab grade submissions
-    labPartnerFields = [["partner 1 wustl id (the 6 digit number)", "partner 1 wustl id (the 6-digit number)", 
-        "partner 1 student id (the 6 digit number)", "partner 1 student id (the 6-digit number)"], [
-        "partner 2 wustl id (the 6 digit number)", "partner 2 wustl id (the 6-digit number)", 
-        "partner 2 student id (the 6 digit number)", "partner 2 student id (the 6-digit number)"]]
-    labWorkingWithPartner = "are they working with a partner?"
-    labCommitToGithub = "commit to github"
-    labTAName = "name"
-    labStartTime = "start time"
-    labNotes = "notes"
-    labNonGradingFields = {
-        "partner 1 wustl key",
-        "partner 2 wustl key", 
-        "partner 1 wustl id (the 6 digit number)", 
-        "partner 1 wustl id (the 6-digit number)",
-        "partner 1 student id (the 6 digit number)", 
-        "partner 1 student id (the 6-digit number)", 
-        "partner 2 wustl id (the 6 digit number)", 
-        "partner 2 wustl id (the 6-digit number)",
-        "partner 2 student id (the 6 digit number)", 
-        "partner 2 student id (the 6-digit number)",
-        "completion time", 
-        "ta name", 
-        "email", 
-        "are they working with a partner?", 
-        "commit to github",
-        "is this a regrade?",
-        "start time",
-        "name"
+    labNames = [
+        "Assignment 0",
+        "Assignment 1",
+        "Assignment 2",
+        "Assignment 3",
+        "Assignment 5",
+        "Assignment 6",
+        "Assignment 7",
+        "Assignment 8",
+        "Assignment 10",
+        "Assignment 11",
+        "Assignment 12"
+    ]
+    labRubricUpToDate = {
+        "Assignment 0": False,
+        "Assignment 1": True,
+        "Assignment 2": True,
+        "Assignment 3": False,
+        "Assignment 5": False,
+        "Assignment 6": False,
+        "Assignment 7": False,
+        "Assignment 8": False,
+        "Assignment 10": False,
+        "Assignment 11": False,
+        "Assignment 12": False
     }
+    labPartnerFields = {
+        "Assignment 1"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
+        "Assignment 2"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
+        "Assignment 3"	:	["", ""],
+        "Assignment 5"	:	["", ""],
+        "Assignment 6"	:	["", ""],
+        "Assignment 7"	:	["", ""],
+        "Assignment 8"	:	["", ""],
+        "Assignment 10"	:	["", ""],
+        "Assignment 11"	:	["", ""],
+        "Assignment 12" :   ["", ""],
+        "Assignment 0"  :   ["", ""]
+    }
+    labWorkingWithPartner = {
+        "Assignment 1"	:	"Are they working with a partner?",
+        "Assignment 2"	:	"Are they working with a partner?",
+        "Assignment 3"	:	"",
+        "Assignment 5"	:	"",
+        "Assignment 6"	:	"",
+        "Assignment 7"	:	"",
+        "Assignment 8"	:	"",
+        "Assignment 10"	:	"",
+        "Assignment 11"	:	"",
+        "Assignment 12" :   "",
+        "Assignment 0"  :   ""
+    }
+    labCommitToGithub = {
+        "Assignment 1"	:	"Commit to Github",
+        "Assignment 2"	:	"Committed to Github before demo",
+        "Assignment 3"	:	"",
+        "Assignment 5"	:	"",
+        "Assignment 6"	:	"",
+        "Assignment 7"	:	"",
+        "Assignment 8"	:	"",
+        "Assignment 10"	:	"",
+        "Assignment 11"	:	"",
+        "Assignment 12" :   "",
+        "Assignment 0"  :   ""
+    }
+    labTAName = {
+        "Assignment 1"	:	"Name",
+        "Assignment 2"	:	"Name",
+        "Assignment 3"	:	"Name",
+        "Assignment 5"	:	"Name",
+        "Assignment 6"	:	"Name",
+        "Assignment 7"	:	"Name",
+        "Assignment 8"	:	"Name",
+        "Assignment 10"	:	"Name",
+        "Assignment 11"	:	"Name",
+        "Assignment 12" :   "Name",
+        "Assignment 0"  :   "Name"
+    }
+    labStartTime = {
+        "Assignment 1"	:	"Start time",
+        "Assignment 2"	:	"Start time",
+        "Assignment 3"	:	"Start time",
+        "Assignment 5"	:	"Start time",
+        "Assignment 6"	:	"Start time",
+        "Assignment 7"	:	"Start time",
+        "Assignment 8"	:	"Start time",
+        "Assignment 10"	:	"Start time",
+        "Assignment 11"	:	"Start time",
+        "Assignment 12" :   "Start time",
+        "Assignment 0"  :   "Start time"
+    }
+    labNotes = {
+        "Assignment 1"	:	"",
+        "Assignment 2"	:	"Comments/Notes",
+        "Assignment 3"	:	"",
+        "Assignment 5"	:	"",
+        "Assignment 6"	:	"",
+        "Assignment 7"	:	"",
+        "Assignment 8"	:	"",
+        "Assignment 10"	:	"",
+        "Assignment 11"	:	"",
+        "Assignment 12" :   "",
+        "Assignment 0"  :   ""
+    }
+    labIsRegrade = {
+        "Assignment 1"	:	"Is this a regrade?",
+        "Assignment 2"	:	"Is this a regrade?",
+        "Assignment 3"	:	"",
+        "Assignment 5"	:	"",
+        "Assignment 6"	:	"",
+        "Assignment 7"	:	"",
+        "Assignment 8"	:	"",
+        "Assignment 10"	:	"",
+        "Assignment 11"	:	"",
+        "Assignment 12" :   "",
+        "Assignment 0"  :   ""
+    }
+    labNonGradingFields = {
+        "TA Name",
+        "Start time",
+        "Completion time",
+        "Email",
+        "Name"
+    }
+    for key in labNames:
+        labNonGradingFields.add(labPartnerFields[key][0])        
+        labNonGradingFields.add(labPartnerFields[key][1])
+        labNonGradingFields.add(labWorkingWithPartner[key])
+        labNonGradingFields.add(labCommitToGithub[key])
+        labNonGradingFields.add(labTAName[key])
+        labNonGradingFields.add(labStartTime[key])
+        labNonGradingFields.add(labNotes[key])
+        labNonGradingFields.add(labIsRegrade[key])
+
 
     # Constants relating to parsing studio submissions
-    studioPartnerFields = ["student one student id (6 digit number)", 
-                           "student two student id (6 digit number)",
-                           "student three student id (6 digit number)", 
-                           "student four student id (6 digit number)"
-                           ]
-    studioTAName = "ta name"
-    studioStartTime = "start time"
-    # labNonGradingFields = {
-    #     "partner 1  wustl key",
-    #     "partner 2  wustl key", 
-    #     "completion time", 
-    #     "ta name", 
-    #     "email", 
-    #     "are they working with a partner?", 
-    #     "commit to github",
-    #     "start time",
-    #     "name"
-    # }
+    studioNames = [
+        "Studio 0",
+        "Studio 1",
+        "Studio 2",
+        "Studio 3",
+        "Studio 4",
+        "Studio 5",
+        "Studio 6",
+        "Studio 7",
+        "Studio 8",
+        "Studio 10",
+        "Studio 11",
+        "Studio 12"
+    ]
+    studioRubricUpToDate = {
+        "Studio 0"  : True,
+        "Studio 1"  : False,
+        "Studio 2"  : False,
+        "Studio 3"  : False,
+        "Studio 4"  : False,
+        "Studio 5"  : False,
+        "Studio 6"  : False,
+        "Studio 7"  : False,
+        "Studio 8"  : False,
+        "Studio 10" : False,
+        "Studio 11" : False,
+        "Studio 12" : False
+    }
+    studioPartnerFields = {
+        "Studio 0": ["Student One Student ID (6 Digit Number)",
+                     "Student Two Student ID (6 Digit Number)",
+                     "Student Three Student ID (6 Digit Number)",
+                     "Student Four Student ID (6 Digit Number)"
+                     ],
+        "Studio 1": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 2": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 3": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 4": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 5": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 6": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 7": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 8": ["",
+                     "",
+                     "",
+                     ""
+                     ],
+        "Studio 10": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+        "Studio 11": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+        "Studio 12": ["",
+                      "",
+                      "",
+                      ""
+                      ]
+    }       
+    studioTAName = {
+        "Studio 0": "TA Name",
+        "Studio 1": "",
+        "Studio 2": "",
+        "Studio 3": "",
+        "Studio 4": "",
+        "Studio 5": "",
+        "Studio 6": "",
+        "Studio 7": "",
+        "Studio 8": "",
+        "Studio 10": "",
+        "Studio 11": "",
+        "Studio 12": ""
+    }
+    studioStartTime = {
+        "Studio 0": "Start time",
+        "Studio 1": "",
+        "Studio 2": "",
+        "Studio 3": "",
+        "Studio 4": "",
+        "Studio 5": "",
+        "Studio 6": "",
+        "Studio 7": "",
+        "Studio 8": "",
+        "Studio 10": "",
+        "Studio 11": "",
+        "Studio 12": ""
+    }
