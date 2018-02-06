@@ -105,6 +105,7 @@ class Constants:
     labCommitToGithub = "commit to github"
     labTAName = "name"
     labStartTime = "start time"
+    labNotes = "notes"
     labNonGradingFields = {
         "partner 1 wustl key",
         "partner 2 wustl key", 

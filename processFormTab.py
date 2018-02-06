@@ -193,11 +193,11 @@ def loadGrades( student_dict, grade_dict, uuid_map ):
     print "Loading grades from gradebook"
     for student_uuid in grade_dict:
         for grade in grade_dict[student_uuid]["grades"]:
-            grade_obj = Grade(grade["name"], grade["points"], grade["kind"], grade["timestamp"], grade["grader"])
+            grade_obj = Grade(grade["name"], grade["points"], grade["kind"], grade["timestamp"], grade["grader"], grade["notes"], grade["isRegrade"])
             history = grade["history"]
             for old_grade in history:
-                old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"], old_grade["timestamp"], old_grade["grader"])
-                grade_obj.addGrade(old_grade_obj)
+                old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"], old_grade["timestamp"], old_grade["grader"], old_grade["notes"], old_grade["isRegrade"])
+                grade_obj.addHistory(old_grade_obj)
             student_dict[student_uuid].addGrade(grade_obj)
         student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])
 
@@ -206,6 +206,8 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
     # print form_results[0]
 
     # Calculate grades for the lab grading form entries
+    # FIXME: replace these all-encompasing constants with form-specific ones. This means that the constants file will need to map desired fields to column
+    #        column headers so that we don't have to change the constants each time we process a new form and risk corrupting the gradebook.
     for entry_tuple in form_results.iterrows():
         # entry = form_results[i]
         entry = entry_tuple[1]
@@ -266,6 +268,12 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
             timestamp = dt.strptime( time_string, "%m/%d/%y %H:%M:%S" )
         
         ta_name = entry[constants.labTAName]
+
+        entry_notes = None
+
+        if constants.labNotes in entry:
+            if str(entry[constants.labNotes]) != "":
+                entry_notes = str(entry[constants.labNotes])
         
         grade = Grade(lab_name, score, "assignment", timestamp, ta_name)
         for partner in partners:
