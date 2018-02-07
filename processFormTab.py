@@ -13,9 +13,9 @@ from shutil import copyfile
 #Load constants from constants.py
 constants = Constants()
 lab_cutoffs = constants.labCutoffs
-lab_cutoffs_secA = constants.labCutoffsSecA
-lab_cutoffs_secB = constants.labCutoffsSecB
-lab_cutoffs_secC = constants.labCutoffsSecC
+# lab_cutoffs_secA = constants.labCutoffsSecA
+# lab_cutoffs_secB = constants.labCutoffsSecB
+# lab_cutoffs_secC = constants.labCutoffsSecC
 gradebook_columns = {}
 #figure out which labs have extra credit
 labsWithExtraCredit = []
@@ -189,6 +189,7 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                 except KeyError:
                     print "KeyError: Unable to find key \"%s\" from entry %i"%(partner, entry_number)
             
+        print "\nProcessing late labs"
         # Process late labs
         for k in student_dict.iterkeys():
             cur_student = student_dict[k]
@@ -201,30 +202,34 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
             #     cur_section = "c"
             num_lates = cur_student.getLates()
             labs = cur_student.getLabs()
-
+            # print "cur_student: %s"%cur_student.getWKey()
             #get student's section here 
-            for lab in labs:
-                lab_deadline = lab_cutoffs[lab]
-                if ( cur_section is "a" ):
-                    lab_deadline = lab_cutoffs_secA
-                elif ( cur_section is "b" ):
-                    lab_deadline = lab_cutoffs_secB
-                elif (cur_section is "c" ):
-                    lab_deadline = lab_cutoffs_secC
+            # print "student: %s, labs: %s"%(cur_student.getWKey(), str(labs))
+            for lab in labs.iterkeys():
+                lab_deadline = lab_cutoffs[cur_section][lab]
+                # if ( cur_section is "a" ):
+                #     lab_deadline = lab_cutoffs_secA
+                # elif ( cur_section is "b" ):
+                #     lab_deadline = lab_cutoffs_secB
+                # elif (cur_section is "c" ):
+                #     lab_deadline = lab_cutoffs_secC
+                # lab_deadline = lab_cutoffs[cur_section]
                 lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
                 lab_is_regrade = cur_student.getGrades()[lab].getIsRegrade()
-
-                if lab_sub_time > lab_deadline and not lab_is_regrade:
+                # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
+                if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
                     if ( lab_sub_time - lab_deadline ).days > 7:
-                        student_dict[k].grades[lab].setPoints( 0 )
+                        student_dict[k].getGrades()[lab].setPoints( 0 )
                     else:
                         #add this number to gradebook, so student can see how many
                         if num_lates < 2:
                             num_lates += 1
+                            print "Late lab for %s on %s"%(cur_student.getWKey(), lab)
                         else:
                             #maybe get rid of 
-                            num_lates += 1
-                            student_dict[k].grades[lab].setPoints( 0 )
+                            # num_lates += 1
+                            student_dict[k].getGrades()[lab].setPoints( 0 )
+                        student_dict[k].getGrades()[lab].setIsLate( True )
             if num_lates > student_dict[k].getLates():
                 student_dict[k].setLates( num_lates )
     else:
@@ -322,11 +327,12 @@ def loadGrades(student_dict, grade_dict, uuid_map):
     for student_uuid in grade_dict:
         for grade in grade_dict[student_uuid]["grades"]:
             grade_obj = Grade(grade["name"], grade["points"], grade["kind"],
-                              grade["timestamp"], grade["grader"], grade["notes"], grade["isRegrade"])
+                              grade["timestamp"], grade["grader"], grade["notes"], grade["isRegrade"], grade["isLate"])
             history = grade["history"]
             for old_grade in history:
                 old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"],
-                                      old_grade["timestamp"], old_grade["grader"], old_grade["notes"], old_grade["isRegrade"])
+                                      old_grade["timestamp"], old_grade["grader"], old_grade["notes"], old_grade["isRegrade"],
+                                      old_grade["isLate"])
                 grade_obj.addHistory(old_grade_obj)
             student_dict[student_uuid].addGrade(grade_obj)
         student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])

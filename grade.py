@@ -1,7 +1,7 @@
 import json, datetime, sys
 
 class Grade:
-    def __init__(self, name, points, kind, timestamp, grader, notes=None, isRegrade=False):
+    def __init__(self, name, points, kind, timestamp, grader, notes=None, isRegrade=False, isLate=False):
         self.name = name
         self.points = points
         self.kind = kind
@@ -19,6 +19,7 @@ class Grade:
         self.grader = grader
         self.notes = notes
         self.history = []
+        self.isLate = isLate
 
     def getName( self ):
         return self.name
@@ -28,6 +29,12 @@ class Grade:
 
     def setPoints( self, points ):
         self.points = points
+
+    def getIsLate(self):
+        return self.isLate
+    
+    def setIsLate( self, isLate ):
+        self.isLate = isLate
 
     def getTimestamp( self ):
         return self.timestamp
@@ -45,13 +52,14 @@ class Grade:
         return self.notes
 
     def regrade( self, new_grade ):
-        self.history.append(Grade(self.name, self.points, self.kind, self.timestamp, self.grader, self.notes, self.isRegrade))
+        self.history.append(Grade(self.name, self.points, self.kind, self.timestamp, self.grader, self.notes, self.isRegrade, self.isLate))
         self.name = new_grade.getName()
         self.points = new_grade.getPoints()
         self.timestamp = new_grade.getTimestamp()
         self.isRegrade = True
         self.grader = new_grade.getGrader()
         self.notes = new_grade.getNotes()
+        self.isLate = new_grade.getIsLate() and self.getIsLate()
 
     def getHistory( self ):
         return self.history
@@ -71,7 +79,8 @@ class Grade:
             "isRegrade": self.isRegrade,
             "grader": self.grader,
             "notes": self.notes,
-            "history": history
+            "history": history,
+            "isLate": self.isLate
         }
         return grade_output
 

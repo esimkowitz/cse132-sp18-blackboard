@@ -35,13 +35,13 @@ class Student:
         self.lates = numLates
 
     def getLabs( self ):
-        return { k : v for k, v in self.grades.iteritems() if "Lab" in k and not "Late" in k }
+        return { k : v for k, v in self.grades.iteritems() if ((v.getKind() == "assignment") and (v.getIsLate() == False))}
 
     def getStudios( self ):
-        return { k : v for k, v in self.grades.iteritems() if "Stu" in k }
+        return {k: v for k, v in self.grades.iteritems() if v.getKind() == "studio"}
 
     def printGrades( self ):
-        for g in self.getGrades():
+        for g in self.grades:
             print str( g )
 
     def __str__( self ):

@@ -1,64 +1,66 @@
 from datetime import datetime
 class Constants:
 
-    labCutoffs = {	
-        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:45:00", "%b %d %Y %H:%M:%S" )
-    }
+    # labCutoffs = {	
+    #     "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:45:00", "%b %d %Y %H:%M:%S" ),
+    #     "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:45:00", "%b %d %Y %H:%M:%S" )
+    # }
 
     #Section 1 cutoff at 2:40pm on lab due day, extra 10 min for leeway
-    labCutoffsSecA = { 
-        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 11" :   datetime.strptime( "Apr 18 2018 14:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 12" :   datetime.strptime( "Apr 25 2018 14:40:00", "%b %d %Y %H:%M:%S" )
-    }
-
     #Section 2 cutoff at 4:10pm on lab due day, extra 10 min for leeway
-    labCutoffsSecB = { 
-        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 11" :   datetime.strptime( "Apr 18 2018 16:10:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 12" :   datetime.strptime( "Apr 25 2018 16:10:00", "%b %d %Y %H:%M:%S" )
-    }
-
     #Section 3 cutoff at 5:40pm on lab due day, extra 10 min for leeway
-    labCutoffsSecC = { 
-        "Assignment 0"	:	datetime.strptime( "Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 1"	:	datetime.strptime( "Jan 31 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 2"	:	datetime.strptime( "Feb 07 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 3"	:	datetime.strptime( "Feb 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 5"	:	datetime.strptime( "Feb 28 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 6"	:	datetime.strptime( "Mar 06 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 7"	:	datetime.strptime( "Mar 21 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 8"	:	datetime.strptime( "Apr 04 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 10"	:	datetime.strptime( "Apr 11 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 11" :   datetime.strptime( "Apr 18 2018 17:40:00", "%b %d %Y %H:%M:%S" ),
-        "Assignment 12" :   datetime.strptime( "Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S" )
-    }
+
+    labCutoffs = {
+        "a": {
+            "Assignment 0"	:	datetime.strptime("Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 1"	:	datetime.strptime("Jan 31 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 2"	:	datetime.strptime("Feb 07 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 3"	:	datetime.strptime("Feb 21 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 5"	:	datetime.strptime("Feb 28 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 06 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 7"	:	datetime.strptime("Mar 21 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 8"	:	datetime.strptime("Apr 04 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 10"	:	datetime.strptime("Apr 11 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 11":   datetime.strptime("Apr 18 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 12":   datetime.strptime("Apr 25 2018 14:40:00", "%b %d %Y %H:%M:%S")
+        },
+        "b": {
+            "Assignment 0"	:	datetime.strptime("Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 1"	:	datetime.strptime("Jan 31 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 2"	:	datetime.strptime("Feb 07 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 3"	:	datetime.strptime("Feb 21 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 5"	:	datetime.strptime("Feb 28 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 06 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 7"	:	datetime.strptime("Mar 21 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 8"	:	datetime.strptime("Apr 04 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 10"	:	datetime.strptime("Apr 11 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 11":   datetime.strptime("Apr 18 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 12":   datetime.strptime("Apr 25 2018 16:10:00", "%b %d %Y %H:%M:%S")
+        }, 
+        "c": {
+            "Assignment 0"	:	datetime.strptime("Aug 01 2030 17:45:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 1"	:	datetime.strptime("Jan 31 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 2"	:	datetime.strptime("Feb 07 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 3"	:	datetime.strptime("Feb 21 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 5"	:	datetime.strptime("Feb 28 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 06 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 7"	:	datetime.strptime("Mar 21 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 8"	:	datetime.strptime("Apr 04 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 10"	:	datetime.strptime("Apr 11 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 11":   datetime.strptime("Apr 18 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 12":   datetime.strptime("Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S")
+        }
+    } 
+
 
     column_ids = {
         "Assignment 1"	:	"Assignment 1 [Total Pts: 100.00000 Score] |1271854",
