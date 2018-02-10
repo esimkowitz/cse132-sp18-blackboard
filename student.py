@@ -11,6 +11,8 @@ class Student:
             self.grades[grade.name] = grade
         elif grade.getIsRegrade() is True:
             self.grades[grade.name].regrade(grade)
+        elif grade.getTimestamp() == self.grades[grade.name].getTimestamp():
+            self.grades[grade.name] = grade
         else:
             pass
     def getSection( self ):
