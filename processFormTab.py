@@ -153,7 +153,7 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                     except ValueError:
                         print key + " is not a grading field"
 
-            if entry[constants.labCommitToGithub[lab_name]] != True:
+            if entry[constants.labCommitToGithub[lab_name]] != "True":
                 score -= 1
             partner_str = partners[0]
             if len(partners) > 1:
