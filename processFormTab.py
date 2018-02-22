@@ -13,14 +13,13 @@ from shutil import copyfile
 #Load constants from constants.py
 constants = Constants()
 lab_cutoffs = constants.labCutoffs
-# lab_cutoffs_secA = constants.labCutoffsSecA
-# lab_cutoffs_secB = constants.labCutoffsSecB
-# lab_cutoffs_secC = constants.labCutoffsSecC
 gradebook_columns = {}
+
 #figure out which labs have extra credit
 labsWithExtraCredit = []
 labGrades = []
 studioGrades = []
+
 
 def getKeyToUUID(roster_path):
     #Load dictionary mapping WUSTL key to Schoology UUID
@@ -60,22 +59,22 @@ def process( mode, form_results_file, roster_file, gradebook_path ):
     student_dict_B = {}
     student_dict_C = {}
     uuid_map = getKeyToUUID(roster_file.name)
+
     #Open JSON file
     roster_file.seek(0)
 
     roster = json.load(roster_file)
     roster_file.close()
 
+    global current_gradebook_path
+    global old_gradebook_path
+    current_gradebook_path = gradebook_path
+    old_gradebook_path = None
+
     #add all students to student_dict, add each student to their own section's student_dict
     for key in roster:
         student_dict[roster[key]["wk"]] = Student(roster[key]["wk"], key)
         student_dict[roster[key]["wk"]].setSection(roster[key]["section"])
-        # if( roster[key]["section"] == "a" ):
-        #     student_dict_A[roster[key]["wk"]] = Student(roster[key]["wk"], key)
-        # elif( roster[key]["section"] == "b" ):
-        #     student_dict_B[roster[key]["wk"]] = Student(roster[key]["wk"], key)
-        # elif( roster[key]["section"] == "c" ):
-        #     student_dict_C[roster[key]["wk"]] = Student(roster[key]["wk"], key)
     try:        
         gradebook_file = open(gradebook_path, 'r')
         gradebook_file.seek(0)        
@@ -84,61 +83,61 @@ def process( mode, form_results_file, roster_file, gradebook_path ):
             loadGrades(student_dict, gradebook, uuid_map)
         except ValueError as e:
             print "ValueError: Error with loadGrades: %s" % e
-        gradebook_file.close()    
-        os.rename(gradebook_path, "old_gradebook_%i.json" % time.time())
+        gradebook_file.close()   
+        old_gradebook_path = "old_gradebook_%i.json" % time.time()
+        os.rename(gradebook_path, old_gradebook_path)
     except IOError as e:
         if e.errno == 2:
             print "IOError: Gradebook is empty, skipping loadGrades"
         else:
-            print "Unexpected IOError: %s"%e
+            error("Unexpected IOError: %s" % e)
     except ValueError as e:
-        print "ValueError decoding JSON: %s"%e
-    gradebook_file = open(gradebook_path, 'w')
+        error("ValueError decoding JSON: %s"%e)
 
     form_results = pandas.read_table(form_results_file)
-    print len(form_results.index)
-
 
     regex = r"(?P<form_type>Assignment|Studio)( )?(?P<form_number>[0-9]+)"
+    
+    # Deprecated regex, use one above.
     # regex = r"(?:CSE 132 (?P<semester>(?:SP|FL)[0-9]{2}) )?(?P<form_name>(?P<form_type>Assignment|Studio)( )?(?P<form_number>[0-9]+))(?:\([0-9]+\-[0-9]+\))"
     match_result = re.search(regex, form_results_file.name)
     form_type = match_result.group('form_type')
     form_name = "%s %s"%(form_type, match_result.group('form_number'))
 
-    print "Processing form for " + form_name
+    print "Processing %i entries for %s" % (len(form_results.index), form_name)
+
     if (form_type.lower() == "studio" and mode != "studios") or (form_type.lower() == "assignment" and mode != "labs"):
-        print "Error: form type and mode type don't match"
-        sys.exit(0)
+        error("form type and mode type don't match")
     
-    gradebook_file.seek(0)
-    if mode == "labs":
-        print "Doing labs"
-        #pass in each section's student dict as well as total
-        doLabs( student_dict, form_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C )
-    elif mode == "studios":
-        print "Doing studios"
-        doStudios( student_dict, form_name, form_results, uuid_map )
-    else:
-        print "Invalid assignment type."
-        sys.exit( 0 )
-    makeGradeBook(student_dict, gradebook_file)
-    makeUploadFile(student_dict, form_name)
-    gradebook_file.close()
-    form_results_file.close()
+    try:
+        if mode == "labs":
+            print "Doing labs"
+            #pass in each section's student dict as well as total
+            doLabs( student_dict, form_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C )
+        elif mode == "studios":
+            print "Doing studios"
+            doStudios( student_dict, form_name, form_results, uuid_map )
+        else:
+            error("Invalid assignment type.")
+
+        makeGradeBook(student_dict, gradebook_path)
+        makeUploadFile(student_dict, form_name)
+        form_results_file.close()
+
+    except Exception as e:
+        form_results_file.close()
+        error("Unexpected error", e)
 
 
 def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C ):
     # Calculate grades for the lab grading form entries
     if constants.labRubricUpToDate[lab_name]:
         for entry_tuple in form_results.iterrows():
-            # entry = form_results[i]
             entry = entry_tuple[1]
             entry_number = entry_tuple[0]
-            # print entry
             partners = []
             partners.append(
                 str(int(entry[constants.labPartnerFields[lab_name][0]])))
-
 
             if entry[constants.labWorkingWithPartner[lab_name]] == "Yes":
                 partners.append(
@@ -155,17 +154,19 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
 
             if entry[constants.labCommitToGithub[lab_name]] != "True":
                 score -= 1
-            partner_str = partners[0]
-            if len(partners) > 1:
-                partner_str += " and " + partners[1]
-            print "Score for %s is %f"%(partner_str, score)
+
+            # FIXME: This was causing an IOError so I commented it out
+            # partner_str = partners[0]
+            # if len(partners) > 1:
+            #     partner_str += " and " + partners[1]
+            # print "Score for %s is %f"%(partner_str, score)
 
 
             if score > constants.maxScore[lab_name]:
-                #make this a thing ~~~~~~~~~~
+                # TODO: make this a thing ~~~~~~~~~~
                 # if not labsWithExtraCredit[lab_name]:
-                print "ERROR: Invalid score for this assignment. Check that your non-grading fields are correct."
-                sys.exit(1)
+                error("Invalid score for this assignment. Check that your non-grading fields are correct.")
+                
 
             time_string = entry[constants.labStartTime[lab_name]]
 
@@ -194,47 +195,32 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
         for k in student_dict.iterkeys():
             cur_student = student_dict[k]
             cur_section = cur_student.getSection()
-            # if ( k in student_dict_A.keys() ):
-            #     cur_section = "a"
-            # elif ( k in student_dict_B.keys() ):
-            #     cur_section = "b"
-            # elif ( k in student_dict_C.keys() ):
-            #     cur_section = "c"
             num_lates = cur_student.getLates()
             labs = cur_student.getLabs()
-            # print "cur_student: %s"%cur_student.getWKey()
-            #get student's section here 
+            # get student's section here 
+            # Uncomment below for debugging
             # print "student: %s, labs: %s"%(cur_student.getWKey(), str(labs))
             for lab in labs.iterkeys():
                 lab_deadline = lab_cutoffs[cur_section][lab]
-                # if ( cur_section is "a" ):
-                #     lab_deadline = lab_cutoffs_secA
-                # elif ( cur_section is "b" ):
-                #     lab_deadline = lab_cutoffs_secB
-                # elif (cur_section is "c" ):
-                #     lab_deadline = lab_cutoffs_secC
-                # lab_deadline = lab_cutoffs[cur_section]
                 lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
                 lab_is_regrade = cur_student.getGrades()[lab].getIsRegrade()
+                # Uncomment below for debugging
                 # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
                     if ( lab_sub_time - lab_deadline ).days > 7:
                         student_dict[k].getGrades()[lab].setPoints( 0 )
                     else:
-                        #add this number to gradebook, so student can see how many
+                        # add this number to gradebook, so student can see how many
                         if num_lates < 2:
                             num_lates += 1
                             print "Late lab for %s on %s"%(cur_student.getWKey(), lab)
                         else:
-                            #maybe get rid of 
-                            # num_lates += 1
                             student_dict[k].getGrades()[lab].setPoints( 0 )
                         student_dict[k].getGrades()[lab].setIsLate( True )
             if num_lates > student_dict[k].getLates():
                 student_dict[k].setLates( num_lates )
     else:
-        print "Rubric for %s is not up to date, please update the update the fields \
-               in the constants file and try again."%lab_name
+        error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again."%lab_name)
 
 def doStudios( student_dict, studio_name, form_results, uuid_map ):
 
@@ -243,7 +229,6 @@ def doStudios( student_dict, studio_name, form_results, uuid_map ):
         for entry_tuple in form_results.iterrows():
             entry = entry_tuple[1]
             entry_number = entry_tuple[0]
-            # print entry
             partners = []
             for partner_field in constants.studioPartnerFields[studio_name]:
                 if partner_field != "":
@@ -260,43 +245,18 @@ def doStudios( student_dict, studio_name, form_results, uuid_map ):
             ta_name = entry[constants.studioTAName[studio_name]]
 
             grade = Grade(studio_name, 1, "studio", timestamp, ta_name)
-            score_string = "Grade added for student(s) %s"
-            partner_string = ""
+            # score_string = "Grade added for student(s) %s"
+            # partner_string = ""
             for partner in partners:
                 try:
                     student_dict[uuid_map[partner]].addGrade(grade)
-                    # print "Grade added for student " + uuid_map[partner] + " with ID " + partner
-                    # print str(student_dict[uuid_map[partner]])
-                    partner_string += "%s, "%partner
+                    # partner_string += "%s, "%partner
                 except KeyError:
                     print "Unable to find student with ID " + partner
-            print score_string%partner_string[0:len(partner_string)-2]
-        # #Build studio CSV file
-        # csv_data = []
-        # headers = [ "Unique User ID" ] + [ "Studio " + str(k) for k in range( 1, 11 ) ]
-        # csv_data.append( headers )
-        # for k in student_dict.iterkeys():
-        #     cur_student = student_dict[k]
-        #     student_data_row = []
-        #     student_data_row.append( cur_student.getInfo()[1] )
-        #     student_studios = cur_student.getStudios()
-        #     for assignment in headers[1::]:
-        #         if assignment in student_studios.iterkeys():
-        #             student_data_row.append( student_studios[assignment].getPoints() )
-        #         else:
-        #             student_data_row.append( 0 )
-        #     csv_data.append( student_data_row )
-        # studioGrades = csv_data
-        # #Write studio CSV file
-        # with open( "studiogrades.csv", "w" ) as f:
-        #     print "Writing studiogrades.csv"
-        #     csv_writer = csv.writer( f, delimiter="," )
-        #     csv_writer.writerows( csv_data )
-        #     print "Done writing studiogrades.csv"
+            # FIXME: This was causing an IOError so I commented it out. Also the declarations above.
+            # print score_string%partner_string[0:len(partner_string)-2]
     else:
-        print "Rubric for %s is not up to date, please update the update the fields \
-               in the constants file and try again." % studio_name
-
+        error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % studio_name)
 
 def makeUploadFile(student_dict, form_name):
     #Build CSV file for upload to Blackboard
@@ -338,7 +298,7 @@ def loadGrades(student_dict, grade_dict, uuid_map):
         student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])
 
 
-def makeGradeBook(student_dict, gradebook):
+def makeGradeBook(student_dict, gradebook_path):
     gradebook_output = {}
     for student_id in student_dict:
         student = student_dict[student_id]
@@ -347,9 +307,28 @@ def makeGradeBook(student_dict, gradebook):
         for grade_key in student_grades:
             student_output["grades"].append(student_grades[grade_key].output())
         gradebook_output[student_id] = student_output
-    # print json.dumps(gradebook_output)
-    json.dump(gradebook_output, gradebook)
 
+    gradebook_file = open(gradebook_path, 'w')
+    json.dump(gradebook_output, gradebook_file)
+    gradebook_file.close()
+
+def error(error_string, error_obj = None):
+    global current_gradebook_path
+    global old_gradebook_path
+    if error_obj != None:
+        print "\nERROR: %s. %s"%(error_string, error_obj)
+    else:
+        print "\nERROR: %s"%error_string
+    revert_changes(current_gradebook_path, old_gradebook_path)
+    print "Exiting"
+    sys.exit(0)
+
+def revert_changes(file_path, old_file_path):
+    print "Reverting to previous %s"%file_path
+    if os.path.exists(old_file_path):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        os.rename(old_file_path, file_path)
 
 def maybe_new_file(file_path):
     if os.path.exists(file_path):
