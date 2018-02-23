@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding=utf-8
 import sys, os, csv, json, re, math, httplib2, xlrd, argparse, time, pandas
 
 from xlstojson import xlstojson
@@ -9,6 +10,8 @@ from constantsTab import Constants
 from grade import Grade
 from shutil import copyfile
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 #Load constants from constants.py
 constants = Constants()
@@ -180,10 +183,11 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
             entry_notes = None
 
             if constants.labNotes[lab_name] in entry:
-                if str(entry[constants.labNotes[lab_name]]) != "":
-                    entry_notes = str(entry[constants.labNotes[lab_name]])
+                if str(entry[constants.labNotes[lab_name]]) != "nan":
+                    # print "found notes in entry %i: %s" % (entry_number, str(entry[constants.labNotes[lab_name]]))
+                    entry_notes = str(entry[constants.labNotes[lab_name]]).decode('utf-8', 'ignore').encode("utf-8")
             
-            grade = Grade(lab_name, score, "assignment", timestamp, ta_name)
+            grade = Grade(lab_name, score, "assignment", timestamp, ta_name, entry_notes)
             for partner in partners:
                 try:
                     student_dict[uuid_map[partner]].addGrade(grade)
@@ -325,10 +329,11 @@ def error(error_string, error_obj = None):
 
 def revert_changes(file_path, old_file_path):
     print "Reverting to previous %s"%file_path
-    if os.path.exists(old_file_path):
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        os.rename(old_file_path, file_path)
+    if old_file_path != None:
+        if os.path.exists(old_file_path):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            os.rename(old_file_path, file_path)
 
 def maybe_new_file(file_path):
     if os.path.exists(file_path):

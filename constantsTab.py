@@ -121,7 +121,7 @@ class Constants:
         "Assignment 0": False,
         "Assignment 1": True,
         "Assignment 2": True,
-        "Assignment 3": False,
+        "Assignment 3": True,
         "Assignment 5": False,
         "Assignment 6": False,
         "Assignment 7": False,
@@ -133,7 +133,7 @@ class Constants:
     labPartnerFields = {
         "Assignment 1"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
         "Assignment 2"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
-        "Assignment 3"	:	["", ""],
+        "Assignment 3"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 5"	:	["", ""],
         "Assignment 6"	:	["", ""],
         "Assignment 7"	:	["", ""],
@@ -146,7 +146,7 @@ class Constants:
     labWorkingWithPartner = {
         "Assignment 1"	:	"Are they working with a partner?",
         "Assignment 2"	:	"Are they working with a partner?",
-        "Assignment 3"	:	"",
+        "Assignment 3"	:	"Are they working with a partner?",
         "Assignment 5"	:	"",
         "Assignment 6"	:	"",
         "Assignment 7"	:	"",
@@ -159,7 +159,7 @@ class Constants:
     labCommitToGithub = {
         "Assignment 1"	:	"Commit to Github",
         "Assignment 2"	:	"Committed to Github before demo",
-        "Assignment 3"	:	"",
+        "Assignment 3"	:	"Committed to Github before demo",
         "Assignment 5"	:	"",
         "Assignment 6"	:	"",
         "Assignment 7"	:	"",
@@ -198,7 +198,7 @@ class Constants:
     labNotes = {
         "Assignment 1"	:	"",
         "Assignment 2"	:	"Comments/Notes",
-        "Assignment 3"	:	"",
+        "Assignment 3"	:	"Comments/Notes",
         "Assignment 5"	:	"",
         "Assignment 6"	:	"",
         "Assignment 7"	:	"",
@@ -211,7 +211,7 @@ class Constants:
     labIsRegrade = {
         "Assignment 1"	:	"Is this a regrade?",
         "Assignment 2"	:	"Is this a regrade?",
-        "Assignment 3"	:	"",
+        "Assignment 3"	:	"Is this a regrade?",
         "Assignment 5"	:	"",
         "Assignment 6"	:	"",
         "Assignment 7"	:	"",
@@ -256,11 +256,11 @@ class Constants:
     ]
     studioRubricUpToDate = {
         "Studio 0"  : True,
-        "Studio 1"  : False,
-        "Studio 2"  : False,
-        "Studio 3"  : False,
+        "Studio 1"  : True,
+        "Studio 2"  : True,
+        "Studio 3"  : True,
         "Studio 4"  : False,
-        "Studio 5"  : False,
+        "Studio 5"  : True,
         "Studio 6"  : False,
         "Studio 7"  : False,
         "Studio 8"  : False,
@@ -274,30 +274,30 @@ class Constants:
                      "Student Three Student ID (6 Digit Number)",
                      "Student Four Student ID (6 Digit Number)"
                      ],
-        "Studio 1": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 1": ["Student 1 Student ID (6 Digit num)",
+                     "Student 2 Student ID (6 Digit num)",
+                     "Student 3 Student ID (6 Digit num)",
+                     "Student 4 Student ID (6 Digit num)"
                      ],
-        "Studio 2": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 2": ["Student 1 6 Digit Student ID",
+                     "Student 2 6 Digit Student ID",
+                     "Student 3 6 Digit Student ID",
+                     "Student 4 6 Digit Student Id"
                      ],
-        "Studio 3": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 3": ["Student 1 6 digit Student ID",
+                     "Student 2 6 Digit Student ID",
+                     "Student 3 6 Digit Student ID",
+                     "Student 4 6 Digit Student ID"
                      ],
         "Studio 4": ["",
                      "",
                      "",
                      ""
                      ],
-        "Studio 5": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 5": ["Student 1 6 digit Student ID",
+                     "Student 2 6 Digit Student ID",
+                     "Student 3 6 Digit Student ID",
+                     "Student 4 6 Digit Student ID"
                      ],
         "Studio 6": ["",
                      "",
@@ -332,11 +332,11 @@ class Constants:
     }       
     studioTAName = {
         "Studio 0": "TA Name",
-        "Studio 1": "",
-        "Studio 2": "",
-        "Studio 3": "",
+        "Studio 1": "TA Name",
+        "Studio 2": "TA Name",
+        "Studio 3": "TA Name",
         "Studio 4": "",
-        "Studio 5": "",
+        "Studio 5": "Name",
         "Studio 6": "",
         "Studio 7": "",
         "Studio 8": "",
@@ -346,11 +346,11 @@ class Constants:
     }
     studioStartTime = {
         "Studio 0": "Start time",
-        "Studio 1": "",
-        "Studio 2": "",
-        "Studio 3": "",
+        "Studio 1": "Start time",
+        "Studio 2": "Start time",
+        "Studio 3": "Start time",
         "Studio 4": "",
-        "Studio 5": "",
+        "Studio 5": "Start time",
         "Studio 6": "",
         "Studio 7": "",
         "Studio 8": "",
