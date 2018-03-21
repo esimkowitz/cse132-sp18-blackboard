@@ -19,3 +19,5 @@ gradebook.json
 *.csv
 *.txt
 *.xls
+studio-forms/
+assignment-forms/

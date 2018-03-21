@@ -3,16 +3,17 @@ class Student:
         self.grades = {}
         self.wkey = wkey
         self.student_id = student_id
-        self.lates = 0
         self.section = None
 
-    def addGrade( self, grade ):
+    def addGrade(self, grade):
         if not grade.name in self.grades.iterkeys():
             self.grades[grade.name] = grade
         elif grade.getIsRegrade() is True:
             self.grades[grade.name].regrade(grade)
         elif grade.getTimestamp() == self.grades[grade.name].getTimestamp():
+            old_grade_is_late = self.grades[grade.name].getIsLate()
             self.grades[grade.name] = grade
+            self.grades[grade.name].setIsLate(old_grade_is_late)
         else:
             pass
     def getSection( self ):
@@ -28,16 +29,16 @@ class Student:
         return self.student_id
 
     def getLates( self ):
-        return self.lates
+        return len(self.getLateLabs())
     
     def setSection( self, section ):
         self.section = section
 
-    def setLates( self, numLates ):
-        self.lates = numLates
-
     def getLabs( self ):
-        return { k : v for k, v in self.grades.iteritems() if ((v.getKind() == "assignment") and (v.getIsLate() == False))}
+        return{k: v for k, v in self.grades.iteritems() if((v.getKind() == "assignment") and(v.getIsLate() == False))}
+        
+    def getLateLabs(self):
+        return {k: v for k, v in self.grades.iteritems() if((v.getKind() == "assignment") and(v.getIsLate() == True))}
 
     def getStudios( self ):
         return {k: v for k, v in self.grades.iteritems() if v.getKind() == "studio"}

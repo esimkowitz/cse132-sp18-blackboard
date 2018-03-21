@@ -155,7 +155,7 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                     except ValueError:
                         print key + " is not a grading field"
 
-            if entry[constants.labCommitToGithub[lab_name]] != "True":
+            if str(entry[constants.labCommitToGithub[lab_name]]) != "True":
                 score -= 1
 
             # FIXME: This was causing an IOError so I commented it out
@@ -199,7 +199,6 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
         for k in student_dict.iterkeys():
             cur_student = student_dict[k]
             cur_section = cur_student.getSection()
-            num_lates = cur_student.getLates()
             labs = cur_student.getLabs()
             # get student's section here 
             # Uncomment below for debugging
@@ -208,21 +207,25 @@ def doLabs( student_dict, lab_name, form_results, uuid_map, student_dict_A, stud
                 lab_deadline = lab_cutoffs[cur_section][lab]
                 lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
                 lab_is_regrade = cur_student.getGrades()[lab].getIsRegrade()
+                num_lates = cur_student.getLates()
+
                 # Uncomment below for debugging
                 # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
-                    if ( lab_sub_time - lab_deadline ).days > 7:
+                    if(lab_sub_time - lab_deadline).days > 7:
+                        print "Super late lab for %s on %s"%(cur_student.getWKey(), lab)
                         student_dict[k].getGrades()[lab].setPoints( 0 )
                     else:
                         # add this number to gradebook, so student can see how many
-                        if num_lates < 2:
-                            num_lates += 1
-                            print "Late lab for %s on %s"%(cur_student.getWKey(), lab)
+                        if (student_dict[k].getGrades()[lab].getIsLate() == False):
+                            if num_lates < 2:
+                                print "Late lab for %s on %s"%(cur_student.getWKey(), lab)
+                            else:
+                                print "Late lab for %s on %s with no late coupons left"%(cur_student.getWKey(), lab)
+                                student_dict[k].getGrades()[lab].setPoints( 0 )
+                            student_dict[k].getGrades()[lab].setIsLate(True)
                         else:
-                            student_dict[k].getGrades()[lab].setPoints( 0 )
-                        student_dict[k].getGrades()[lab].setIsLate( True )
-            if num_lates > student_dict[k].getLates():
-                student_dict[k].setLates( num_lates )
+                            print "Late lab already known for %s on %s" % (cur_student.getWKey(), lab)
     else:
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again."%lab_name)
 
@@ -291,22 +294,20 @@ def loadGrades(student_dict, grade_dict, uuid_map):
     for student_uuid in grade_dict:
         for grade in grade_dict[student_uuid]["grades"]:
             grade_obj = Grade(grade["name"], grade["points"], grade["kind"],
-                              grade["timestamp"], grade["grader"], grade["notes"], grade["isRegrade"], grade["isLate"])
+                              grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"])
             history = grade["history"]
             for old_grade in history:
                 old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"],
-                                      old_grade["timestamp"], old_grade["grader"], old_grade["notes"], old_grade["isRegrade"],
-                                      old_grade["isLate"])
+                                      old_grade["timestamp"], old_grade["grader"], old_grade["notes"], isRegrade=old_grade["isRegrade"],
+                                      isLate=old_grade["isLate"])
                 grade_obj.addHistory(old_grade_obj)
             student_dict[student_uuid].addGrade(grade_obj)
-        student_dict[student_uuid].setLates(grade_dict[student_uuid]["lates"])
-
 
 def makeGradeBook(student_dict, gradebook_path):
     gradebook_output = {}
     for student_id in student_dict:
         student = student_dict[student_id]
-        student_output = {"grades": [], "lates": student.getLates()}
+        student_output = {"grades": []}
         student_grades = student.getGrades()
         for grade_key in student_grades:
             student_output["grades"].append(student_grades[grade_key].output())
