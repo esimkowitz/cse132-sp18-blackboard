@@ -1,23 +1,10 @@
-201802_E_E81_132_A_L.txt
-201802_E_E81_132_B_L.txt
-201802_E_E81_132_C_L.txt
-Studio0(1-61).xlsx
-~$Studio0(1-61).xlsx
 *.pyc
-jsontemp
-new_roster.json
-bb_api_credentials.json
-gc_*.csv
-newRoster.json
-roster.json
-Studio 0(1-61).json
-Studio 0(1-61).xlsx
-studiogrades.csv
-gradebook.json
 *.json
 *.xlsx
 *.csv
-*.txt
 *.xls
 studio-forms/
 assignment-forms/
+rosters/
+old_gradebooks/
+grade_output.txt
