@@ -86,7 +86,7 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     global old_gradebook_path
     current_gradebook_path = gradebook_path
     old_gradebook_path = None
-    old_graebook_dir = "old_gradebooks"
+    old_gradebook_dir = "old_gradebooks"
 
     # add all students to student_dict, add each student to their own section's student_dict
     for key in roster:
@@ -230,7 +230,7 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                 # Uncomment below for debugging
                 # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
-                    if(lab_sub_time - lab_deadline).days > 7:
+                    if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
                         print "Super late lab for %s on %s" % (cur_student.getWKey(), lab)
                         student_dict[k].getGrades()[lab].setPoints(0)
                     else:

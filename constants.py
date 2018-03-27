@@ -12,7 +12,7 @@ class Constants:
             "Assignment 2"	:	datetime.strptime("Feb 07 2018 14:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 3"	:	datetime.strptime("Feb 21 2018 14:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 5"	:	datetime.strptime("Feb 28 2018 14:40:00", "%b %d %Y %H:%M:%S"),
-            "Assignment 6"	:	datetime.strptime("Mar 06 2018 14:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 07 2018 14:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 7"	:	datetime.strptime("Mar 21 2018 14:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 8"	:	datetime.strptime("Apr 04 2018 14:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 10"	:	datetime.strptime("Apr 11 2018 14:40:00", "%b %d %Y %H:%M:%S"),
@@ -25,7 +25,7 @@ class Constants:
             "Assignment 2"	:	datetime.strptime("Feb 07 2018 16:10:00", "%b %d %Y %H:%M:%S"),
             "Assignment 3"	:	datetime.strptime("Feb 21 2018 16:10:00", "%b %d %Y %H:%M:%S"),
             "Assignment 5"	:	datetime.strptime("Feb 28 2018 16:10:00", "%b %d %Y %H:%M:%S"),
-            "Assignment 6"	:	datetime.strptime("Mar 06 2018 16:10:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 07 2018 16:10:00", "%b %d %Y %H:%M:%S"),
             "Assignment 7"	:	datetime.strptime("Mar 21 2018 16:10:00", "%b %d %Y %H:%M:%S"),
             "Assignment 8"	:	datetime.strptime("Apr 04 2018 16:10:00", "%b %d %Y %H:%M:%S"),
             "Assignment 10"	:	datetime.strptime("Apr 11 2018 16:10:00", "%b %d %Y %H:%M:%S"),
@@ -38,14 +38,28 @@ class Constants:
             "Assignment 2"	:	datetime.strptime("Feb 07 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 3"	:	datetime.strptime("Feb 21 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 5"	:	datetime.strptime("Feb 28 2018 17:40:00", "%b %d %Y %H:%M:%S"),
-            "Assignment 6"	:	datetime.strptime("Mar 06 2018 17:40:00", "%b %d %Y %H:%M:%S"),
+            "Assignment 6"	:	datetime.strptime("Mar 07 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 7"	:	datetime.strptime("Mar 21 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 8"	:	datetime.strptime("Apr 04 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 10"	:	datetime.strptime("Apr 11 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 11":   datetime.strptime("Apr 18 2018 17:40:00", "%b %d %Y %H:%M:%S"),
             "Assignment 12":   datetime.strptime("Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S")
         }
-    } 
+    }
+    
+    labNumLateDays = {
+        "Assignment 1"	:	7,
+        "Assignment 2"	:	7,
+        "Assignment 3"	:	7,
+        "Assignment 5"	:	7,
+        "Assignment 6"	:	14,
+        "Assignment 7"	:	7,
+        "Assignment 8"	:	7,
+        "Assignment 10"	:	7,
+        "Assignment 11"	:	7,
+        "Assignment 12":   7,
+        "Assignment 0":   7
+    }
 
 
     column_ids = {
@@ -109,7 +123,7 @@ class Constants:
         "Assignment 2": True,
         "Assignment 3": True,
         "Assignment 5": True,
-        "Assignment 6": False,
+        "Assignment 6": True,
         "Assignment 7": False,
         "Assignment 8": False,
         "Assignment 10": False,
@@ -121,7 +135,7 @@ class Constants:
         "Assignment 2"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
         "Assignment 3"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 5"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
-        "Assignment 6"	:	["", ""],
+        "Assignment 6"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 7"	:	["", ""],
         "Assignment 8"	:	["", ""],
         "Assignment 10"	:	["", ""],
@@ -134,7 +148,7 @@ class Constants:
         "Assignment 2"	:	"Are they working with a partner?",
         "Assignment 3"	:	"Are they working with a partner?",
         "Assignment 5"	:	"Are they working with a partner?",
-        "Assignment 6"	:	"",
+        "Assignment 6"	:	"Are they working with a partner?",
         "Assignment 7"	:	"",
         "Assignment 8"	:	"",
         "Assignment 10"	:	"",
@@ -147,7 +161,7 @@ class Constants:
         "Assignment 2"	:	"Committed to Github before demo",
         "Assignment 3"	:	"Committed to Github before demo",
         "Assignment 5"	:	"Committed to Github before demo",
-        "Assignment 6"	:	"",
+        "Assignment 6"	:	"Committed to Github before demo",
         "Assignment 7"	:	"",
         "Assignment 8"	:	"",
         "Assignment 10"	:	"",
@@ -186,7 +200,7 @@ class Constants:
         "Assignment 2"	:	"Comments/Notes",
         "Assignment 3"	:	"Comments/Notes",
         "Assignment 5"	:	"Comments/Notes",
-        "Assignment 6"	:	"",
+        "Assignment 6"	:	"Comments/Notes",
         "Assignment 7"	:	"",
         "Assignment 8"	:	"",
         "Assignment 10"	:	"",
