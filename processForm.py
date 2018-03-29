@@ -7,17 +7,17 @@ import json
 import re
 import math
 import httplib2
-import xlrd
 import argparse
 import time
 import pandas
 import dateutil.parser
+import traceback
 
-from xlstojson import xlstojson
 from datetime import datetime as dt
 from datetime import date
 from student import Student
-from constants import Constants
+from constants import Constants, GradebookPaths, error
+from pytz import timezone
 from grade import Grade
 from shutil import copyfile
 
@@ -26,6 +26,7 @@ sys.setdefaultencoding('utf8')
 
 # Load constants from constants.py
 constants = Constants()
+gradebook_paths = GradebookPaths()
 lab_cutoffs = constants.labCutoffs
 gradebook_columns = {}
 
@@ -82,12 +83,10 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     roster = json.load(roster_file)
     roster_file.close()
 
-    global old_gradebook_dir
-    global current_gradebook_path
-    global old_gradebook_path
     current_gradebook_path = gradebook_path
-    old_gradebook_path = None
+    old_gradebook_path = "temp_gradebook.json"
     old_gradebook_dir = "old_gradebooks"
+    gradebook_paths.update(current_gradebook_path, old_gradebook_path)
 
     # add all students to student_dict, add each student to their own section's student_dict
     for key in roster:
@@ -100,11 +99,14 @@ def process(mode, form_results_file, roster_file, gradebook_path):
         try:
             loadGrades(student_dict, gradebook, uuid_map)
         except ValueError as e:
-            print "ValueError: Error with loadGrades: %s" % e
+            print"ValueError: Error with loadGrades: %s"% e
+        except Exception as e:
+            error("Unexpected error in loadGrades: %s"%e)
         gradebook_file.close()
         if not os.path.exists(old_gradebook_dir):
             os.mkdir(old_gradebook_dir)
-        old_gradebook_path = "%s/old_gradebook_%i.json" % (old_gradebook_dir, time.time())
+        old_gradebook_path = "%s/old_gradebook_%i.json"%(old_gradebook_dir, time.time())
+        gradebook_paths.update(current_gradebook_path, old_gradebook_path)
         os.rename(gradebook_path, old_gradebook_path)
     except IOError as e:
         if e.errno == 2:
@@ -148,7 +150,6 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     except Exception as e:
         form_results_file.close()
         error("Unexpected error", e)
-
 
 def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C):
     # Calculate grades for the lab grading form entries
@@ -197,6 +198,14 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                     timestamp = dt.strptime(time_string, "%Y-%m-%dT%H:%M:%S")
                 except ValueError:
                     timestamp = dt.strptime(time_string, "%m/%d/%y %H:%M:%S")
+                except:
+                    print"ERROR: Timestamp format is invalid when trying strptime in doLabs"
+                    sys.exit(1)
+                timestamp = constants.tz.localize(timestamp)
+            except:
+                print"ERROR: Timestamp format is invalid when trying dateutil.parser in doLabs"
+                sys.exit(1)
+
 
             ta_name = entry[constants.labTAName[lab_name]]
 
@@ -239,7 +248,7 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                 num_lates = cur_student.getNumLates()
                 num_lates_counted = 0
                 # Uncomment below for debugging
-                # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
+                print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
                     if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
                         print "Super late lab for %s on %s" % (cur_student.getWKey(), lab)
@@ -359,27 +368,6 @@ def makeGradeBook(student_dict, gradebook_path):
     gradebook_file = open(gradebook_path, 'w')
     json.dump(gradebook_output, gradebook_file)
     gradebook_file.close()
-
-
-def error(error_string, error_obj=None):
-    global current_gradebook_path
-    global old_gradebook_path
-    if error_obj != None:
-        print "\nERROR: %s. %s" % (error_string, error_obj)
-    else:
-        print "\nERROR: %s" % error_string
-    revert_changes(current_gradebook_path, old_gradebook_path)
-    print "Exiting"
-    sys.exit(0)
-
-
-def revert_changes(file_path, old_file_path):
-    print "Reverting to previous %s" % file_path
-    if old_file_path != None:
-        if os.path.exists(old_file_path):
-            if os.path.exists(file_path):
-                os.remove(file_path)
-            os.rename(old_file_path, file_path)
 
 
 def maybe_new_file(file_path):

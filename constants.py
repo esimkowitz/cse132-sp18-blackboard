@@ -1,18 +1,46 @@
 from datetime import datetime, timedelta
 from pytz import timezone
+import sys, os, traceback
 
-central = timezone("US/Central")
+def error(error_string, error_obj=None):
+    if error_obj != None:
+        traceback.print_exc(error_obj)
+        print "\nERROR: %s. %s" % (error_string, error_obj)
+    else:
+        print"\nERROR: %s"% error_string
+    gradebook_paths = GradebookPaths()
+    revert_changes(gradebook_paths.current, gradebook_paths.old)
+    print "Exiting"
+    sys.exit(0)
 
-def handleDST(cutoffs):
-    for k in cutoffs.iterkeys():
-        cutoffs[k] = central.localize(cutoffs[k])
-    return cutoffs
-            
+
+def revert_changes(file_path, old_file_path):
+    print "Reverting to previous %s" % file_path
+    if old_file_path != None:
+        if os.path.exists(old_file_path):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            os.rename(old_file_path, file_path)
+
+# A class with static path variables that any function can update
+class GradebookPaths:
+    current = ""
+    old = ""
+
+    def __init__(self):
+        pass
+    
+    def update(self, current_gradebook_path, old_gradebook_path):
+        self.old = old_gradebook_path
+        self.current = current_gradebook_path
+                
 class Constants:
 
     #Section 1 cutoff at 2:40pm on lab due day, extra 10 min for leeway
     #Section 2 cutoff at 4:10pm on lab due day, extra 10 min for leeway
     #Section 3 cutoff at 5:40pm on lab due day, extra 10 min for leeway
+
+    tz = timezone("US/Central")
 
     labCutoffs = {
         "a": {
@@ -58,7 +86,9 @@ class Constants:
 
     # Uncomment below if it's after daylight savings 
     for period in labCutoffs:
-        labCutoffs[period] = handleDST(labCutoffs[period])
+        for k in labCutoffs[period].iterkeys():
+            labCutoffs[period][k] = tz.localize(labCutoffs[period][k])
+        # labCutoffs[period] = handleDST(labCutoffs[period])
     
     labNumLateDays = {
         "Assignment 1"	:	7,
