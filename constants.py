@@ -1,4 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from pytz import timezone
+
+central = timezone("US/Central")
+
+def handleDST(cutoffs):
+    for k in cutoffs.iterkeys():
+        cutoffs[k] = central.localize(cutoffs[k])
+    return cutoffs
+            
 class Constants:
 
     #Section 1 cutoff at 2:40pm on lab due day, extra 10 min for leeway
@@ -46,6 +55,10 @@ class Constants:
             "Assignment 12":   datetime.strptime("Apr 25 2018 17:40:00", "%b %d %Y %H:%M:%S")
         }
     }
+
+    # Uncomment below if it's after daylight savings 
+    for period in labCutoffs:
+        labCutoffs[period] = handleDST(labCutoffs[period])
     
     labNumLateDays = {
         "Assignment 1"	:	7,

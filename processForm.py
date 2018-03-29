@@ -11,6 +11,7 @@ import xlrd
 import argparse
 import time
 import pandas
+import dateutil.parser
 
 from xlstojson import xlstojson
 from datetime import datetime as dt
@@ -44,26 +45,26 @@ def getKeyToUUID(roster_path):
         return uuid_map
 
 
-def readWriteData(file_name):
-    # Turn CSV file into JSON file
-    try:
-        with open(file_name, 'r') as grades:
-            with open("jsontemp", 'w') as form_results_json:
-                reader = csv.DictReader(grades)
-                form_results.seek()
-                for row in reader:
-                    json.dump(row, form_results_json)
-                    form_results_json.write("\n")
-                return form_results_json.name
-    except:
-        print "Invalid file name"
-        sys.exit(0)
+# def readWriteData(file_name):
+#     # Turn CSV file into JSON file
+#     try:
+#         with open(file_name, 'r') as grades:
+#             with open("jsontemp", 'w') as form_results_json:
+#                 reader = csv.DictReader(grades)
+#                 form_results.seek()
+#                 for row in reader:
+#                     json.dump(row, form_results_json)
+#                     form_results_json.write("\n")
+#                 return form_results_json.name
+#     except:
+#         print "Invalid file name"
+#         sys.exit(0)
 
 
-def readWriteDataExcel(file_name):
-    # Turn xls file into JSON file
-    file_path = os.path.realpath(file_name)
-    return xlstojson(file_path)
+# def readWriteDataExcel(file_name):
+#     # Turn xls file into JSON file
+#     file_path = os.path.realpath(file_name)
+#     return xlstojson(file_path)
 
 
 def process(mode, form_results_file, roster_file, gradebook_path):
@@ -190,9 +191,12 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
             time_string = entry[constants.labStartTime[lab_name]]
 
             try:
-                timestamp = dt.strptime(time_string, "%Y-%m-%dT%H:%M:%S")
+                timestamp = dateutil.parser.parse(time_string)
             except ValueError:
-                timestamp = dt.strptime(time_string, "%m/%d/%y %H:%M:%S")
+                try:
+                    timestamp = dt.strptime(time_string, "%Y-%m-%dT%H:%M:%S")
+                except ValueError:
+                    timestamp = dt.strptime(time_string, "%m/%d/%y %H:%M:%S")
 
             ta_name = entry[constants.labTAName[lab_name]]
 
@@ -213,6 +217,10 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                     print "KeyError: Unable to find key \"%s\" from entry %i" % (partner, entry_number)
 
         print "\nProcessing late labs"
+        
+        num_late_labs = {}
+        for lab in constants.labRubricUpToDate:
+            num_late_labs[lab] = 0
         # Process late labs
         for k in student_dict.iterkeys():
             cur_student = student_dict[k]
@@ -221,29 +229,40 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
             # get student's section here
             # Uncomment below for debugging
             # print "student: %s, labs: %s"%(cur_student.getWKey(), str(labs))
-            for lab in labs.iterkeys():
+            sorted_labs = sorted(
+                labs, key=lambda k: labs[k].getTimestamp())
+            for lab in sorted_labs:
                 lab_deadline = lab_cutoffs[cur_section][lab]
-                lab_sub_time = cur_student.getGrades()[lab].getTimestamp()
-                lab_is_regrade = cur_student.getGrades()[lab].getIsRegrade()
-                num_lates = cur_student.getLates()
-
+                lab_sub_time = labs[lab].getTimestamp()
+                # print "time: %s, dst: %s"%(lab_sub_time, lab_sub_time.struct_time()[9])
+                lab_is_regrade = labs[lab].getIsRegrade()
+                num_lates = cur_student.getNumLates()
+                num_lates_counted = 0
                 # Uncomment below for debugging
                 # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
                     if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
                         print "Super late lab for %s on %s" % (cur_student.getWKey(), lab)
-                        student_dict[k].getGrades()[lab].setPoints(0)
+                        student_dict[k].getGrades()[lab].setIsZero(True)
                     else:
                         # add this number to gradebook, so student can see how many
-                        if (student_dict[k].getGrades()[lab].getIsLate() == False):
+                        if(student_dict[k].getGrades()[lab].getIsLate() == False):
+                            student_dict[k].getGrades()[lab].setIsLate(True)
                             if num_lates < 2:
                                 print "Late lab for %s on %s" % (cur_student.getWKey(), lab)
                             else:
-                                print "Late lab for %s on %s with no late coupons left" % (cur_student.getWKey(), lab)
-                                student_dict[k].getGrades()[lab].setPoints(0)
-                            student_dict[k].getGrades()[lab].setIsLate(True)
+                                print"Late lab for %s on %s with no late coupons left"%(cur_student.getWKey(), lab)
+                                if num_lates_counted >= 2:
+                                    student_dict[k].getGrades()[lab].setIsZero(True)
+                                else:
+                                    student_dict[k].getGrades()[lab].setIsZero(False)
                         else:
-                            print "Late lab already known for %s on %s" % (cur_student.getWKey(), lab)
+                            if lab == lab_name:
+                                print "Late lab already known for %s on %s"%(cur_student.getWKey(), lab)
+                            
+                    num_lates_counted += 1
+                    num_late_labs[lab] += 1
+        print "Num late labs for %s: %i"%(lab_name, num_late_labs[lab_name])
     else:
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % lab_name)
 
@@ -298,7 +317,10 @@ def makeUploadFile(student_dict, form_name):
         if form_name in student_grades:
             student_data_row = []
             student_data_row.append(cur_student.getWKey())
-            student_data_row.append(student_grades[form_name].getPoints())
+            if student_grades[form_name].getIsZero():
+                student_data_row.append(0)
+            else:
+                student_data_row.append(student_grades[form_name].getPoints())
             csv_data.append(student_data_row)
     # Write lab CSV file
     output_file_name = "grade_output.txt"
@@ -314,12 +336,12 @@ def loadGrades(student_dict, grade_dict, uuid_map):
     for student_uuid in grade_dict:
         for grade in grade_dict[student_uuid]["grades"]:
             grade_obj = Grade(grade["name"], grade["points"], grade["kind"],
-                              grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"])
+                              grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"], isZero=grade["isZero"])
             history = grade["history"]
             for old_grade in history:
                 old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"],
                                       old_grade["timestamp"], old_grade["grader"], old_grade["notes"], isRegrade=old_grade["isRegrade"],
-                                      isLate=old_grade["isLate"])
+                                      isLate=old_grade["isLate"], isZero=old_grade["isZero"])
                 grade_obj.addHistory(old_grade_obj)
             student_dict[student_uuid].addGrade(grade_obj)
 

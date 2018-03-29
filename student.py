@@ -28,17 +28,17 @@ class Student:
     def getStudentID( self ):
         return self.student_id
 
-    def getLates( self ):
+    def getNumLates( self ):
         return len(self.getLateLabs())
     
     def setSection( self, section ):
         self.section = section
 
     def getLabs( self ):
-        return{k: v for k, v in self.grades.iteritems() if((v.getKind() == "assignment") and(v.getIsLate() == False))}
+        return{k: v for k, v in self.grades.iteritems() if (v.getKind() == "assignment")}
         
     def getLateLabs(self):
-        return {k: v for k, v in self.grades.iteritems() if((v.getKind() == "assignment") and(v.getIsLate() == True))}
+        return {k: v for k, v in self.grades.iteritems() if ((v.getKind() == "assignment") and(v.getIsLate() == True))}
 
     def getStudios( self ):
         return {k: v for k, v in self.grades.iteritems() if v.getKind() == "studio"}
