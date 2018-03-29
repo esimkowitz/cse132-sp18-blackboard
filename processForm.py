@@ -14,9 +14,9 @@ import dateutil.parser
 import traceback
 
 from datetime import datetime as dt
-from datetime import date
+from datetime import date, timedelta
 from student import Student
-from constants import Constants, GradebookPaths, error
+from constants import Constants
 from pytz import timezone
 from grade import Grade
 from shutil import copyfile
@@ -26,7 +26,6 @@ sys.setdefaultencoding('utf8')
 
 # Load constants from constants.py
 constants = Constants()
-gradebook_paths = GradebookPaths()
 lab_cutoffs = constants.labCutoffs
 gradebook_columns = {}
 
@@ -83,10 +82,12 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     roster = json.load(roster_file)
     roster_file.close()
 
+    global current_gradebook_path
+    global old_gradebook_path
+
     current_gradebook_path = gradebook_path
-    old_gradebook_path = "temp_gradebook.json"
+    old_gradebook_path = None
     old_gradebook_dir = "old_gradebooks"
-    gradebook_paths.update(current_gradebook_path, old_gradebook_path)
 
     # add all students to student_dict, add each student to their own section's student_dict
     for key in roster:
@@ -106,7 +107,6 @@ def process(mode, form_results_file, roster_file, gradebook_path):
         if not os.path.exists(old_gradebook_dir):
             os.mkdir(old_gradebook_dir)
         old_gradebook_path = "%s/old_gradebook_%i.json"%(old_gradebook_dir, time.time())
-        gradebook_paths.update(current_gradebook_path, old_gradebook_path)
         os.rename(gradebook_path, old_gradebook_path)
     except IOError as e:
         if e.errno == 2:
@@ -201,12 +201,22 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                 except:
                     print"ERROR: Timestamp format is invalid when trying strptime in doLabs"
                     sys.exit(1)
-                timestamp = constants.tz.localize(timestamp)
             except:
                 print"ERROR: Timestamp format is invalid when trying dateutil.parser in doLabs"
                 sys.exit(1)
 
+            try:
+                timestamp = constants.tz.localize(timestamp)
+            except ValueError:
+                # The datetime already has a timezone
+                pass
 
+
+            # This fixes a known issue with Microsoft Forms where it does not account for Daylight Saving Time.
+            # This issue means that dates recorded before DST but processed after DST will be an hour later than
+            # they should be. This snippet below is my solution to this. If it is currently daylight savings
+            # if timestamp.dst() != timedelta
+            timestamp -= dt.now(constants.tz).dst() - timestamp.dst()
             ta_name = entry[constants.labTAName[lab_name]]
 
             entry_notes = None
@@ -235,6 +245,8 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
             cur_student = student_dict[k]
             cur_section = cur_student.getSection()
             labs = cur_student.getLabs()
+            num_lates_counted = 0
+
             # get student's section here
             # Uncomment below for debugging
             # print "student: %s, labs: %s"%(cur_student.getWKey(), str(labs))
@@ -246,9 +258,9 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                 # print "time: %s, dst: %s"%(lab_sub_time, lab_sub_time.struct_time()[9])
                 lab_is_regrade = labs[lab].getIsRegrade()
                 num_lates = cur_student.getNumLates()
-                num_lates_counted = 0
                 # Uncomment below for debugging
-                print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
+                # if lab == lab_name:
+                    # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
                 if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
                     if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
                         print "Super late lab for %s on %s" % (cur_student.getWKey(), lab)
@@ -257,17 +269,17 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                         # add this number to gradebook, so student can see how many
                         if(student_dict[k].getGrades()[lab].getIsLate() == False):
                             student_dict[k].getGrades()[lab].setIsLate(True)
-                            if num_lates < 2:
-                                print "Late lab for %s on %s" % (cur_student.getWKey(), lab)
-                            else:
-                                print"Late lab for %s on %s with no late coupons left"%(cur_student.getWKey(), lab)
-                                if num_lates_counted >= 2:
-                                    student_dict[k].getGrades()[lab].setIsZero(True)
-                                else:
-                                    student_dict[k].getGrades()[lab].setIsZero(False)
+                            # if num_lates < 2:
+                            print "Late lab for %s on %s" % (cur_student.getWKey(), lab)
+                            # else:
+                            #     # print"Late lab for %s on %s with no late coupons left"%(cur_student.getWKey(), lab)
+                            #     pass
                         else:
-                            if lab == lab_name:
-                                print "Late lab already known for %s on %s"%(cur_student.getWKey(), lab)
+                            print"Late lab already known for %s on %s"%(cur_student.getWKey(), lab)
+                    if num_lates_counted >= 2:
+                        student_dict[k].getGrades()[lab].setIsZero(True)
+                        print"Late lab for %s on %s with no late coupons left, no credit" % (
+                            cur_student.getWKey(), lab)
                             
                     num_lates_counted += 1
                     num_late_labs[lab] += 1
@@ -369,6 +381,27 @@ def makeGradeBook(student_dict, gradebook_path):
     json.dump(gradebook_output, gradebook_file)
     gradebook_file.close()
 
+
+def error(error_string, error_obj=None):
+    global old_gradebook_path
+    global current_gradebook_path
+    if error_obj != None:
+        traceback.print_exc(error_obj)
+        print "\nERROR: %s. %s" % (error_string, error_obj)
+    else:
+        print"\nERROR: %s" % error_string
+    revert_changes(current_gradebook_path, old_gradebook_path)
+    print "Exiting"
+    sys.exit(0)
+
+
+def revert_changes(file_path, old_file_path):
+    print "Reverting to previous %s" % file_path
+    if old_file_path != None:
+        if os.path.exists(old_file_path):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            os.rename(old_file_path, file_path)
 
 def maybe_new_file(file_path):
     if os.path.exists(file_path):

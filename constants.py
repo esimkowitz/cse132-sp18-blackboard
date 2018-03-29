@@ -2,37 +2,6 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import sys, os, traceback
 
-def error(error_string, error_obj=None):
-    if error_obj != None:
-        traceback.print_exc(error_obj)
-        print "\nERROR: %s. %s" % (error_string, error_obj)
-    else:
-        print"\nERROR: %s"% error_string
-    gradebook_paths = GradebookPaths()
-    revert_changes(gradebook_paths.current, gradebook_paths.old)
-    print "Exiting"
-    sys.exit(0)
-
-
-def revert_changes(file_path, old_file_path):
-    print "Reverting to previous %s" % file_path
-    if old_file_path != None:
-        if os.path.exists(old_file_path):
-            if os.path.exists(file_path):
-                os.remove(file_path)
-            os.rename(old_file_path, file_path)
-
-# A class with static path variables that any function can update
-class GradebookPaths:
-    current = ""
-    old = ""
-
-    def __init__(self):
-        pass
-    
-    def update(self, current_gradebook_path, old_gradebook_path):
-        self.old = old_gradebook_path
-        self.current = current_gradebook_path
                 
 class Constants:
 

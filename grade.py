@@ -2,7 +2,7 @@ import json
 import datetime
 import sys
 import dateutil.parser
-from constants import Constants, error
+from constants import Constants
 
 constants = Constants()
 
@@ -23,18 +23,13 @@ class Grade:
                         timestamp, "%Y-%m-%dT%H:%M:%S")
                 except ValueError:
                     self.timestamp = datetime.datetime.strptime(
-                        timestamp, "%m/%d/%y %H:%M:%S")
-                except Exception as e:
-                    error("Error, unexpected error when setting self.timestamp", e)
-            except:
-                error(
-                    "Error, unexpected error when setting self.timestamp", e)
-                    
-
-        self.timestamp = constants.tz.localize(
-            self.timestamp)
-        
-        self.timestamp -= datetime.datetime.now(constants.tz).dst()
+                        timestamp, "%m/%d/%y %H:%M:%S") 
+        try:
+            self.timestamp = constants.tz.localize(
+                self.timestamp)
+        except ValueError:
+            # The datetime already has a timezone
+            pass
 
         self.isRegrade = isRegrade
         self.grader = grader
