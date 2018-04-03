@@ -1,25 +1,26 @@
 #!/usr/bin/env python
 # encoding=utf-8
-import sys
-import os
+import argparse
 import csv
 import json
-import re
 import math
-import httplib2
-import argparse
+import os
+import re
+import sys
 import time
-import pandas
-import dateutil.parser
 import traceback
-
 from datetime import datetime as dt
 from datetime import date, timedelta
-from student import Student
-from constants import Constants
-from pytz import timezone
-from grade import Grade
 from shutil import copyfile
+
+import dateutil.parser
+import httplib2
+import pandas
+from pytz import timezone
+
+from constants import Constants
+from grade import Grade
+from student import Student
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -152,6 +153,8 @@ def process(mode, form_results_file, roster_file, gradebook_path):
         error("Unexpected error", e)
 
 def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C):
+    num_late_labs = 0
+
     # Calculate grades for the lab grading form entries
     if constants.labRubricUpToDate[lab_name]:
         for entry_tuple in form_results.iterrows():
@@ -215,7 +218,6 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
             # This fixes a known issue with Microsoft Forms where it does not account for Daylight Saving Time.
             # This issue means that dates recorded before DST but processed after DST will be an hour later than
             # they should be. This snippet below is my solution to this. If it is currently daylight savings
-            # if timestamp.dst() != timedelta
             timestamp -= dt.now(constants.tz).dst() - timestamp.dst()
             ta_name = entry[constants.labTAName[lab_name]]
 
@@ -223,7 +225,6 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
 
             if constants.labNotes[lab_name] in entry:
                 if str(entry[constants.labNotes[lab_name]]) != "nan":
-                    # print "found notes in entry %i: %s" % (entry_number, str(entry[constants.labNotes[lab_name]]))
                     entry_notes = str(entry[constants.labNotes[lab_name]]).decode(
                         'utf-8', 'ignore').encode("utf-8")
 
@@ -231,59 +232,13 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                           timestamp, ta_name, entry_notes)
             for partner in partners:
                 try:
-                    student_dict[uuid_map[partner]].addGrade(grade)
+                    if student_dict[uuid_map[partner]].addLab(grade) == True:
+                        num_late_labs += 1
+                        student_dict[uuid_map[partner]].printLateLabs()
                 except KeyError:
-                    print "KeyError: Unable to find key \"%s\" from entry %i" % (partner, entry_number)
-
-        print "\nProcessing late labs"
-        
-        num_late_labs = {}
-        for lab in constants.labRubricUpToDate:
-            num_late_labs[lab] = 0
-        # Process late labs
-        for k in student_dict.iterkeys():
-            cur_student = student_dict[k]
-            cur_section = cur_student.getSection()
-            labs = cur_student.getLabs()
-            num_lates_counted = 0
-
-            # get student's section here
-            # Uncomment below for debugging
-            # print "student: %s, labs: %s"%(cur_student.getWKey(), str(labs))
-            sorted_labs = sorted(
-                labs, key=lambda k: labs[k].getTimestamp())
-            for lab in sorted_labs:
-                lab_deadline = lab_cutoffs[cur_section][lab]
-                lab_sub_time = labs[lab].getTimestamp()
-                # print "time: %s, dst: %s"%(lab_sub_time, lab_sub_time.struct_time()[9])
-                lab_is_regrade = labs[lab].getIsRegrade()
-                num_lates = cur_student.getNumLates()
-                # Uncomment below for debugging
-                # if lab == lab_name:
-                    # print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
-                if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
-                    if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
-                        print "Super late lab for %s on %s" % (cur_student.getWKey(), lab)
-                        student_dict[k].getGrades()[lab].setIsZero(True)
-                    else:
-                        # add this number to gradebook, so student can see how many
-                        if(student_dict[k].getGrades()[lab].getIsLate() == False):
-                            student_dict[k].getGrades()[lab].setIsLate(True)
-                            # if num_lates < 2:
-                            print "Late lab for %s on %s" % (cur_student.getWKey(), lab)
-                            # else:
-                            #     # print"Late lab for %s on %s with no late coupons left"%(cur_student.getWKey(), lab)
-                            #     pass
-                        else:
-                            print"Late lab already known for %s on %s"%(cur_student.getWKey(), lab)
-                    if num_lates_counted >= 2:
-                        student_dict[k].getGrades()[lab].setIsZero(True)
-                        print"Late lab for %s on %s with no late coupons left, no credit" % (
-                            cur_student.getWKey(), lab)
-                            
-                    num_lates_counted += 1
-                    num_late_labs[lab] += 1
-        print "Num late labs for %s: %i"%(lab_name, num_late_labs[lab_name])
+                    print "KeyError: Unable to find key \"%s\" from entry %i" %(partner, entry_number)
+                    
+        print "Num late labs for %s: %i"%(lab_name, num_late_labs)
     else:
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % lab_name)
 
@@ -426,7 +381,6 @@ if __name__ == "__main__":
                         help="Path to the class gradebook file", metavar="FILE", default="gradebook.json",
                         type=str)
     args = parser.parse_args()
-    # arg 0 = studio | lab | ext | blah, arg 1 = file to be processed
     process(args.type, args.input_path, args.roster_path, args.gradebook_path)
 
 

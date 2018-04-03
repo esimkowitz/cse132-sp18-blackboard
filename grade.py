@@ -111,4 +111,4 @@ class Grade:
         return grade_output
 
     def __str__(self):
-        return str(self.timestamp) + ", " + str(self.name) + ": " + str(self.points) + " (isRegrade: " + self.isRegrade + ")" + "\n\thistory: " + str([str(grade) for grade in history])
+        return "%s: [points: %i, timestamp: %s, isLate: %r, isZero: %r]"%(self.name, self.points, str(self.timestamp), self.isLate, self.isZero)
