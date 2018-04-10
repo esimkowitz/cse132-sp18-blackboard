@@ -12,10 +12,12 @@ class Student:
     def addGrade(self, grade):
         if not grade.name in self.grades.iterkeys():
             self.grades[grade.name] = grade
-        elif grade.getIsRegrade() is True:
-            self.grades[grade.name].regrade(grade)
+        elif self.grades[grade.name].getIsRegrade() is True:
+            # self.grades[grade.name].regrade(grade)
+            pass
         elif grade.getTimestamp() == self.grades[grade.name].getTimestamp():
             old_grade_is_late = self.grades[grade.name].getIsLate()
+            # old_grade_is_regrade = self.grades[grade.name].getIsRegrade()
             self.grades[grade.name] = grade
             self.grades[grade.name].setIsLate(old_grade_is_late)
         else:
@@ -44,10 +46,11 @@ class Student:
             # Uncomment below for debugging
             # if lab == lab_name:
             #     print "student: %s, lab: %s, sub_time: %s, deadline: %s"%(cur_student.getWKey(), lab, lab_sub_time, lab_deadline)
-            if (lab_sub_time > lab_deadline) and (lab_is_regrade is False):
+            if (lab_sub_time > lab_deadline):
                 if(lab_sub_time - lab_deadline).days > constants.labNumLateDays[lab]:
                     # print "Super late lab for %s on %s" % (self.wkey, lab)
-                    self.grades[lab].setIsZero(True)
+                    if lab_is_regrade != True:
+                        self.grades[lab].setIsZero(True)
                 else:
                     # add this number to gradebook, so student can see how many
                     if(self.grades[lab].getIsLate() == False):
@@ -58,10 +61,12 @@ class Student:
                         # print"Late lab already known for %s on %s" % (self.wkey, lab)
                         pass
                     if num_lates_counted >= 2:
-                        self.grades[lab].setIsZero(True)
+                        if lab_is_regrade != True:
+                            self.grades[lab].setIsZero(True)
                         # print"Late lab for %s on %s with no late coupons left, no credit" % (self.wkey, lab)
                     else:
-                        self.grades[lab].setIsZero(False)
+                        if lab_is_regrade != True:
+                            self.grades[lab].setIsZero(False)
 
                 num_lates_counted += 1
     
