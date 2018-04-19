@@ -137,8 +137,8 @@ class Constants:
         "Assignment 5": True,
         "Assignment 6": True,
         "Assignment 7": True,
-        "Assignment 8": False,
-        "Assignment 10": False,
+        "Assignment 8": True,
+        "Assignment 10": True,
         "Assignment 11": False,
         "Assignment 12": False
     }
@@ -149,8 +149,8 @@ class Constants:
         "Assignment 5"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 6"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 7"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
-        "Assignment 8"	:	["", ""],
-        "Assignment 10"	:	["", ""],
+        "Assignment 8"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
+        "Assignment 10"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 11"	:	["", ""],
         "Assignment 12" :   ["", ""],
         "Assignment 0"  :   ["", ""]
@@ -162,8 +162,8 @@ class Constants:
         "Assignment 5"	:	"Are they working with a partner?",
         "Assignment 6"	:	"Are they working with a partner?",
         "Assignment 7"	:	"Are they working with a partner?",
-        "Assignment 8"	:	"",
-        "Assignment 10"	:	"",
+        "Assignment 8"	:	"Are they working with a partner?",
+        "Assignment 10"	:	"Are they working with a partner?",
         "Assignment 11"	:	"",
         "Assignment 12" :   "",
         "Assignment 0"  :   ""
@@ -175,8 +175,8 @@ class Constants:
         "Assignment 5"	:	"Committed to Github before demo",
         "Assignment 6"	:	"Committed to Github before demo",
         "Assignment 7"	:	"Committed to Github before demo",
-        "Assignment 8"	:	"",
-        "Assignment 10"	:	"",
+        "Assignment 8"	:	"Committed to Github before demo",
+        "Assignment 10"	:	"Committed to Github before demo",
         "Assignment 11"	:	"",
         "Assignment 12" :   "",
         "Assignment 0"  :   ""
@@ -214,8 +214,8 @@ class Constants:
         "Assignment 5"	:	"Comments/Notes",
         "Assignment 6"	:	"Comments/Notes",
         "Assignment 7"	:	"Comments/Notes",
-        "Assignment 8"	:	"",
-        "Assignment 10"	:	"",
+        "Assignment 8"	:	"Comments/Notes",
+        "Assignment 10"	:	"Comments/Notes",
         "Assignment 11"	:	"",
         "Assignment 12" :   "",
         "Assignment 0"  :   ""
@@ -274,13 +274,13 @@ class Constants:
         "Studio 4"  : False,
         "Studio 5"  : True,
         "Studio 6"  : True,
-        "Studio 7"  : False,
-        "Studio 8"  : False,
-        "Studio 10" : False,
-        "Studio 11" : False,
-        "Studio 12" : False
+        "Studio 7"  : True,
+        "Studio 8"  : True,
+        "Studio 10" : True,
+        "Studio 11" : True,
+        "Studio 12" : True
     }
-    studioPartnerFields = {
+    studioPartnerIDFields = {
         "Studio 0": ["Student One Student ID (6 Digit Number)",
                      "Student Two Student ID (6 Digit Number)",
                      "Student Three Student ID (6 Digit Number)",
@@ -316,32 +316,94 @@ class Constants:
                      "Student 3 6 Digit Student ID",
                      "Student 4 6 Digit Student ID"
                      ],
-        "Studio 7": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 7": ["Student 1 6 digit Student ID",
+                     "Student 2 6 Digit Student ID",
+                     "Student 3 6 Digit Student ID",
+                     "Student 4 6 Digit Student ID"
                      ],
-        "Studio 8": ["",
-                     "",
-                     "",
-                     ""
+        "Studio 8": ["Student 1 6 digit Student ID",
+                     "Student 2 6 Digit Student ID",
+                     "Student 3 6 Digit Student ID",
+                     "Student 4 6 Digit Student ID"
                      ],
-        "Studio 10": ["",
-                      "",
-                      "",
-                      ""
+        "Studio 10": ["Student 1 6 digit Student ID",
+                      "Student 2 6 Digit Student ID",
+                      "Student 3 6 Digit Student ID",
+                      "Student 4 6 Digit Student ID"
                       ],
-        "Studio 11": ["",
-                      "",
-                      "",
-                      ""
+        "Studio 11": ["Student 1 6 digit Student ID",
+                      "Student 2 6 Digit Student ID",
+                      "Student 3 6 Digit Student ID",
+                      "Student 4 6 Digit Student ID"
                       ],
-        "Studio 12": ["",
-                      "",
-                      "",
-                      ""
+        "Studio 12": ["Student 1 6 digit Student ID",
+                      "Student 2 6 Digit Student ID",
+                      "Student 3 6 Digit Student ID",
+                      "Student 4 6 Digit Student ID"
                       ]
-    }       
+    }
+    studioPartnerWKeyFields = {
+         "Studio 0": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 1": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 2": ["Student 1 Wustl Key",
+                      "Student 2 Wustl Key",
+                      "Student 3 Wustl Key",
+                      "Student 4 Wustl Key"
+                      ],
+         "Studio 3": ["Student 1 wustl key",
+                      "Student 2 Wustl Key",
+                      "Student 3 Wustl Key",
+                      "Student 4 Wustl Key"
+                      ],
+         "Studio 4": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 5": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 6": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 7": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 8": ["",
+                      "",
+                      "",
+                      ""
+                      ],
+         "Studio 10": ["",
+                       "",
+                       "",
+                       ""
+                       ],
+         "Studio 11": ["",
+                       "",
+                       "",
+                       ""
+                       ],
+         "Studio 12": ["",
+                       "",
+                       "",
+                       ""
+                       ]
+     }
     studioTAName = {
         "Studio 0": "TA Name",
         "Studio 1": "TA Name",
@@ -350,11 +412,11 @@ class Constants:
         "Studio 4": "",
         "Studio 5": "Name",
         "Studio 6": "Name",
-        "Studio 7": "",
-        "Studio 8": "",
-        "Studio 10": "",
-        "Studio 11": "",
-        "Studio 12": ""
+        "Studio 7": "Name",
+        "Studio 8": "Name",
+        "Studio 10": "Name",
+        "Studio 11": "Name",
+        "Studio 12": "Name"
     }
     studioStartTime = {
         "Studio 0": "Start time",
@@ -364,9 +426,9 @@ class Constants:
         "Studio 4": "",
         "Studio 5": "Start time",
         "Studio 6": "Start time",
-        "Studio 7": "",
-        "Studio 8": "",
-        "Studio 10": "",
-        "Studio 11": "",
-        "Studio 12": ""
+        "Studio 7": "Start time",
+        "Studio 8": "Start time",
+        "Studio 10": "Start time",
+        "Studio 11": "Start time",
+        "Studio 12": "Start time"
     }

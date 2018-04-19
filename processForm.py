@@ -145,7 +145,7 @@ def process(mode, form_results_file, roster_file, gradebook_path):
             error("Invalid assignment type.")
 
         makeGradeBook(student_dict, gradebook_path)
-        makeUploadFile(student_dict, form_name)
+        makeUploadFile(student_dict, uuid_map, form_name)
         form_results_file.close()
 
     except Exception as e:
@@ -251,7 +251,7 @@ def doStudios(student_dict, studio_name, form_results, uuid_map):
             entry = entry_tuple[1]
             entry_number = entry_tuple[0]
             partners = []
-            for partner_field in constants.studioPartnerFields[studio_name]:
+            for partner_field in constants.studioPartnerIDFields[studio_name]:
                 if partner_field != "":
                     if not math.isnan(entry[partner_field]):
                         partners.append(str(int(entry[partner_field])))
@@ -280,24 +280,26 @@ def doStudios(student_dict, studio_name, form_results, uuid_map):
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % studio_name)
 
 
-def makeUploadFile(student_dict, form_name):
+def makeUploadFile(student_dict, uuid_map, form_name):
     # Build CSV file for upload to Blackboard
     csv_data = []
     headers = ["Username"]
     headers.append(constants.column_ids[form_name])
     csv_data.append(headers)
-    for k in student_dict.iterkeys():
-        cur_student = student_dict[k]
-        student_grades = cur_student.getGrades()
+    for student_id in uuid_map.iterkeys():
+        k = uuid_map[student_id]
+        if k in student_dict:
+            cur_student = student_dict[k]
+            student_grades = cur_student.getGrades()
 
-        if form_name in student_grades:
-            student_data_row = []
-            student_data_row.append(cur_student.getWKey())
-            if student_grades[form_name].getIsZero():
-                student_data_row.append(0)
-            else:
-                student_data_row.append(student_grades[form_name].getPoints())
-            csv_data.append(student_data_row)
+            if form_name in student_grades:
+                student_data_row = []
+                student_data_row.append(cur_student.getWKey())
+                if student_grades[form_name].getIsZero():
+                    student_data_row.append(0)
+                else:
+                    student_data_row.append(student_grades[form_name].getPoints())
+                csv_data.append(student_data_row)
     # Write lab CSV file
     output_file_name = "grade_output.txt"
     with open(output_file_name, "w") as f:
