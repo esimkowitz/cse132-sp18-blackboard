@@ -97,7 +97,8 @@ class Constants:
         "Studio 8"      :   "Studio 8 [Total Pts: 1.00000 Score] |1272328",
         "Studio 10"     :   "Studio 10 [Total Pts: 1.00000 Score] |1272327",
         "Studio 11"     :   "Studio 11 [Total Pts: 1.00000 Score] |1272326",
-        "Studio 12"     :   "Studio 12 [Total Pts: 1.00000 Score] |1272325"
+        "Studio 12"     :   "Studio 12 [Total Pts: 1.00000 Score] |1272325",
+        "Lates"         :   "Late Assignments [Total Pts: 15.00000 Score] |1288165"
     }
 
     maxScore = {

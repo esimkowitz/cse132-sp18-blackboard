@@ -172,25 +172,54 @@ class Students():
         json.dump(gradebook_output, gradebook_file)
         gradebook_file.seek(0)
 
+    def getGrades(self, form_name):
+        ret_dict = {}
+        for k in self.student_dict.iterkeys():
+            cur_student = self.student_dict[k]
+            student_grades = cur_student.getGrades()
+
+            if form_name in student_grades:
+                grade = 0
+                if not student_grades[form_name].getIsZero():
+                    grade = student_grades[form_name].getPoints()
+                ret_dict[cur_student.getWKey()] = grade
+        return ret_dict
+
     def makeUploadFile(self, form_name, output_file_name="grade_output.txt"):
         # Build CSV file for upload to Blackboard
         csv_data = []
         headers = ["Username"]
         headers.append(constants.column_ids[form_name])
         csv_data.append(headers)
+
+        grades = self.getGrades(form_name)
+        for student_id in grades.iterkeys():
+            csv_data.append([student_id, grades[student_id]])
+        # Write lab CSV file
+        with open(output_file_name, "w") as f:
+            print "Writing %s" % output_file_name
+            csv_writer = csv.writer(f, delimiter="\t")
+            csv_writer.writerows(csv_data)
+            print "Done writing %s" % output_file_name
+    
+    def getNumLates(self):
+        ret_dict = {}
         for k in self.student_dict.iterkeys():
             cur_student = self.student_dict[k]
-            student_grades = cur_student.getGrades()
+            student_num_lates = cur_student.getNumLates()
+            ret_dict[cur_student.getWKey()] = student_num_lates
+        return ret_dict
 
-            if form_name in student_grades:
-                student_data_row = []
-                student_data_row.append(cur_student.getWKey())
-                if student_grades[form_name].getIsZero():
-                    student_data_row.append(0)
-                else:
-                    student_data_row.append(
-                        student_grades[form_name].getPoints())
-                csv_data.append(student_data_row)
+    def getNumLatesUpload(self, output_file_name="num_lates.txt"):
+        # Build CSV file for upload to Blackboard
+        csv_data = []
+        headers = ["Username"]
+        headers.append(constants.column_ids["Lates"])
+        csv_data.append(headers)
+
+        num_lates = self.getNumLates()
+        for student_id in num_lates.iterkeys():
+            csv_data.append([student_id, num_lates[student_id]])
         # Write lab CSV file
         with open(output_file_name, "w") as f:
             print "Writing %s" % output_file_name
