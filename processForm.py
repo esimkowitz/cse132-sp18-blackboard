@@ -20,7 +20,7 @@ from pytz import timezone
 
 from constants import Constants
 from grade import Grade
-from student import Student
+from student import Student, Students
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -71,51 +71,31 @@ def getKeyToUUID(roster_path):
 def process(mode, form_results_file, roster_file, gradebook_path):
     # Initialize empty dict of students, to be filled from JSON file
     count = 0
-    student_dict = {}
-    student_dict_A = {}
-    student_dict_B = {}
-    student_dict_C = {}
     uuid_map = getKeyToUUID(roster_file.name)
-
-    # Open JSON file
-    roster_file.seek(0)
-
-    roster = json.load(roster_file)
-    roster_file.close()
 
     global current_gradebook_path
     global old_gradebook_path
+    global students
 
     current_gradebook_path = gradebook_path
     old_gradebook_path = None
     old_gradebook_dir = "old_gradebooks"
 
-    # add all students to student_dict, add each student to their own section's student_dict
-    for key in roster:
-        student_dict[roster[key]["wk"]] = Student(roster[key]["wk"], key)
-        student_dict[roster[key]["wk"]].setSection(roster[key]["section"])
     try:
         gradebook_file = open(gradebook_path, 'r')
-        gradebook_file.seek(0)
-        gradebook = json.load(gradebook_file)
-        try:
-            loadGrades(student_dict, gradebook, uuid_map)
-        except ValueError as e:
-            print"ValueError: Error with loadGrades: %s"% e
-        except Exception as e:
-            error("Unexpected error in loadGrades: %s"%e)
+        students = Students(roster_file, gradebook_file)
         gradebook_file.close()
         if not os.path.exists(old_gradebook_dir):
             os.mkdir(old_gradebook_dir)
-        old_gradebook_path = "%s/old_gradebook_%i.json"%(old_gradebook_dir, time.time())
+        old_gradebook_path = "%s/old_gradebook_%i.json" % (
+            old_gradebook_dir, time.time())
         os.rename(gradebook_path, old_gradebook_path)
     except IOError as e:
-        if e.errno == 2:
-            print "IOError: Gradebook is empty, skipping loadGrades"
-        else:
-            error("Unexpected IOError: %s" % e)
+        error("Unexpected IOError: %s" % e)
     except ValueError as e:
         error("ValueError decoding JSON: %s" % e)
+
+    roster_file.close()
 
     form_results = pandas.read_table(form_results_file)
 
@@ -136,23 +116,25 @@ def process(mode, form_results_file, roster_file, gradebook_path):
         if mode == "labs":
             print "Doing labs"
             # pass in each section's student dict as well as total
-            doLabs(student_dict, form_name, form_results, uuid_map,
-                   student_dict_A, student_dict_B, student_dict_C)
+            doLabs(form_name, form_results, uuid_map)
         elif mode == "studios":
             print "Doing studios"
-            doStudios(student_dict, form_name, form_results, uuid_map)
+            doStudios(form_name, form_results, uuid_map)
         else:
             error("Invalid assignment type.")
-
-        makeGradeBook(student_dict, gradebook_path)
-        makeUploadFile(student_dict, uuid_map, form_name)
         form_results_file.close()
+        gradebook_file = open(gradebook_path, 'w')
+        students.makeGradeBook(gradebook_file)
+        gradebook_file.close()
+        students.makeUploadFile(form_name)
 
     except Exception as e:
         form_results_file.close()
         error("Unexpected error", e)
 
-def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, student_dict_B, student_dict_C):
+
+def doLabs(lab_name, form_results, uuid_map):
+    global students
     num_late_labs = 0
 
     # Calculate grades for the lab grading form entries
@@ -214,7 +196,6 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                 # The datetime already has a timezone
                 pass
 
-
             # This fixes a known issue with Microsoft Forms where it does not account for Daylight Saving Time.
             # This issue means that dates recorded before DST but processed after DST will be an hour later than
             # they should be. This snippet below is my solution to this. If it is currently daylight savings
@@ -232,19 +213,20 @@ def doLabs(student_dict, lab_name, form_results, uuid_map, student_dict_A, stude
                           timestamp, ta_name, entry_notes)
             for partner in partners:
                 try:
-                    if student_dict[uuid_map[partner]].addLab(grade) == True:
+                    if students.get(uuid_map[partner]).addLab(grade) == True:
                         num_late_labs += 1
-                        student_dict[uuid_map[partner]].printLateLabs()
+                        students.get(uuid_map[partner]).printLateLabs()
                 except KeyError:
-                    print "KeyError: Unable to find key \"%s\" from entry %i" %(partner, entry_number)
-                    
-        print "Num late labs for %s: %i"%(lab_name, num_late_labs)
+                    print "KeyError: Unable to find key \"%s\" from entry %i" % (
+                        partner, entry_number)
+
+        print "Num late labs for %s: %i" % (lab_name, num_late_labs)
     else:
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % lab_name)
 
 
-def doStudios(student_dict, studio_name, form_results, uuid_map):
-
+def doStudios(studio_name, form_results, uuid_map):
+    global students
     if constants.studioRubricUpToDate[studio_name]:
         # Process studio attendance for each form entry
         for entry_tuple in form_results.iterrows():
@@ -270,7 +252,7 @@ def doStudios(student_dict, studio_name, form_results, uuid_map):
             # partner_string = ""
             for partner in partners:
                 try:
-                    student_dict[uuid_map[partner]].addGrade(grade)
+                    students.get(uuid_map[partner]).addGrade(grade)
                     # partner_string += "%s, "%partner
                 except KeyError:
                     print "Unable to find student with ID " + partner
@@ -278,65 +260,6 @@ def doStudios(student_dict, studio_name, form_results, uuid_map):
             # print score_string%partner_string[0:len(partner_string)-2]
     else:
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % studio_name)
-
-
-def makeUploadFile(student_dict, uuid_map, form_name):
-    # Build CSV file for upload to Blackboard
-    csv_data = []
-    headers = ["Username"]
-    headers.append(constants.column_ids[form_name])
-    csv_data.append(headers)
-    for student_id in uuid_map.iterkeys():
-        k = uuid_map[student_id]
-        if k in student_dict:
-            cur_student = student_dict[k]
-            student_grades = cur_student.getGrades()
-
-            if form_name in student_grades:
-                student_data_row = []
-                student_data_row.append(cur_student.getWKey())
-                if student_grades[form_name].getIsZero():
-                    student_data_row.append(0)
-                else:
-                    student_data_row.append(student_grades[form_name].getPoints())
-                csv_data.append(student_data_row)
-    # Write lab CSV file
-    output_file_name = "grade_output.txt"
-    with open(output_file_name, "w") as f:
-        print "Writing %s" % output_file_name
-        csv_writer = csv.writer(f, delimiter="\t")
-        csv_writer.writerows(csv_data)
-        print "Done writing %s" % output_file_name
-
-
-def loadGrades(student_dict, grade_dict, uuid_map):
-    print "Loading grades from gradebook"
-    for student_uuid in grade_dict:
-        for grade in grade_dict[student_uuid]["grades"]:
-            grade_obj = Grade(grade["name"], grade["points"], grade["kind"],
-                              grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"], isZero=grade["isZero"])
-            history = grade["history"]
-            for old_grade in history:
-                old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"],
-                                      old_grade["timestamp"], old_grade["grader"], old_grade["notes"], isRegrade=old_grade["isRegrade"],
-                                      isLate=old_grade["isLate"], isZero=old_grade["isZero"])
-                grade_obj.addHistory(old_grade_obj)
-            student_dict[student_uuid].addGrade(grade_obj)
-
-
-def makeGradeBook(student_dict, gradebook_path):
-    gradebook_output = {}
-    for student_id in student_dict:
-        student = student_dict[student_id]
-        student_output = {"grades": []}
-        student_grades = student.getGrades()
-        for grade_key in student_grades:
-            student_output["grades"].append(student_grades[grade_key].output())
-        gradebook_output[student_id] = student_output
-
-    gradebook_file = open(gradebook_path, 'w')
-    json.dump(gradebook_output, gradebook_file)
-    gradebook_file.close()
 
 
 def error(error_string, error_obj=None):
@@ -359,6 +282,7 @@ def revert_changes(file_path, old_file_path):
             if os.path.exists(file_path):
                 os.remove(file_path)
             os.rename(old_file_path, file_path)
+
 
 def maybe_new_file(file_path):
     if os.path.exists(file_path):
