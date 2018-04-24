@@ -1,10 +1,15 @@
+import csv
+import json
+import os
+
 from constants import Constants
 from grade import Grade
-import json, os, csv
+
 constants = Constants()
 
+
 class Student:
-    def __init__( self, wkey, student_id ):
+    def __init__(self, wkey, student_id):
         self.grades = {}
         self.wkey = wkey
         self.student_id = student_id
@@ -23,7 +28,7 @@ class Student:
             self.grades[grade.name].setIsLate(old_grade_is_late)
         else:
             pass
-    
+
     def addLab(self, grade):
         self.addGrade(grade)
         self.processLates()
@@ -70,46 +75,47 @@ class Student:
                             self.grades[lab].setIsZero(False)
 
                 num_lates_counted += 1
-    
-    def getSection( self ):
+
+    def getSection(self):
         return self.section
 
-    def getGrades( self ):
+    def getGrades(self):
         return self.grades
 
-    def getWKey( self ):
+    def getWKey(self):
         return self.wkey
-    
-    def getStudentID( self ):
+
+    def getStudentID(self):
         return self.student_id
 
-    def getNumLates( self ):
+    def getNumLates(self):
         return len(self.getLateLabs())
-    
-    def setSection( self, section ):
+
+    def setSection(self, section):
         self.section = section
 
-    def getLabs( self ):
+    def getLabs(self):
         return{k: v for k, v in self.grades.iteritems() if (v.getKind() == "assignment")}
-        
+
     def getLateLabs(self):
         return {k: v for k, v in self.grades.iteritems() if ((v.getKind() == "assignment") and(v.getIsLate() == True))}
 
-    def getStudios( self ):
+    def getStudios(self):
         return {k: v for k, v in self.grades.iteritems() if v.getKind() == "studio"}
 
-    def printGrades( self ):
+    def printGrades(self):
         for g in self.grades:
             print str(g)
-    
+
     def printLateLabs(self):
         labs = self.getLateLabs()
         print self.wkey
         for lab in labs:
-            print "\t%s; due: %s"%(str(labs[lab]), str(constants.labCutoffs[self.section][lab]))
+            print "\t%s; due: %s" % (str(labs[lab]), str(
+                constants.labCutoffs[self.section][lab]))
 
-    def __str__( self ):
-        return  "(%s,%s)"%(str(self.wkey), str(self.student_id)) + ":\n " + str( [ str(g) for g in self.getGrades() ] )
+    def __str__(self):
+        return "(%s,%s)" % (str(self.wkey), str(self.student_id)) + ":\n " + str([str(g) for g in self.getGrades()])
 
 
 class Students():
@@ -119,8 +125,10 @@ class Students():
         roster_file.seek(0)
         roster = json.load(roster_file)
         for key in roster:
-            self.student_dict[roster[key]["wk"]] = Student(roster[key]["wk"], key)
-            self.student_dict[roster[key]["wk"]].setSection(roster[key]["section"])
+            self.student_dict[roster[key]["wk"]] = Student(
+                roster[key]["wk"], key)
+            self.student_dict[roster[key]["wk"]].setSection(
+                roster[key]["section"])
         if (gradebook_file != None):
             try:
                 gradebook_file.seek(0)
@@ -141,12 +149,12 @@ class Students():
         for student_uuid in self.student_dict.iterkeys():
             for grade in grade_dict[student_uuid]["grades"]:
                 grade_obj = Grade(grade["name"], grade["points"], grade["kind"],
-                                grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"], isZero=grade["isZero"])
+                                  grade["timestamp"], grade["grader"], grade["notes"], isRegrade=grade["isRegrade"], isLate=grade["isLate"], isZero=grade["isZero"])
                 history = grade["history"]
                 for old_grade in history:
                     old_grade_obj = Grade(old_grade["name"], old_grade["points"], old_grade["kind"],
-                                        old_grade["timestamp"], old_grade["grader"], old_grade["notes"], isRegrade=old_grade["isRegrade"],
-                                        isLate=old_grade["isLate"], isZero=old_grade["isZero"])
+                                          old_grade["timestamp"], old_grade["grader"], old_grade["notes"], isRegrade=old_grade["isRegrade"],
+                                          isLate=old_grade["isLate"], isZero=old_grade["isZero"])
                     grade_obj.addHistory(old_grade_obj)
                 self.student_dict[student_uuid].addGrade(grade_obj)
 
@@ -157,7 +165,8 @@ class Students():
             student_output = {"grades": []}
             student_grades = student.getGrades()
             for grade_key in student_grades:
-                student_output["grades"].append(student_grades[grade_key].output())
+                student_output["grades"].append(
+                    student_grades[grade_key].output())
             gradebook_output[student_id] = student_output
         gradebook_file.seek(0)
         json.dump(gradebook_output, gradebook_file)
@@ -188,5 +197,6 @@ class Students():
             csv_writer = csv.writer(f, delimiter="\t")
             csv_writer.writerows(csv_data)
             print "Done writing %s" % output_file_name
+
     def get(self, key):
         return self.student_dict[key]

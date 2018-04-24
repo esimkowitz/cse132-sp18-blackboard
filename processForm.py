@@ -46,28 +46,6 @@ def getKeyToUUID(roster_path):
         return uuid_map
 
 
-# def readWriteData(file_name):
-#     # Turn CSV file into JSON file
-#     try:
-#         with open(file_name, 'r') as grades:
-#             with open("jsontemp", 'w') as form_results_json:
-#                 reader = csv.DictReader(grades)
-#                 form_results.seek()
-#                 for row in reader:
-#                     json.dump(row, form_results_json)
-#                     form_results_json.write("\n")
-#                 return form_results_json.name
-#     except:
-#         print "Invalid file name"
-#         sys.exit(0)
-
-
-# def readWriteDataExcel(file_name):
-#     # Turn xls file into JSON file
-#     file_path = os.path.realpath(file_name)
-#     return xlstojson(file_path)
-
-
 def process(mode, form_results_file, roster_file, gradebook_path):
     # Initialize empty dict of students, to be filled from JSON file
     count = 0

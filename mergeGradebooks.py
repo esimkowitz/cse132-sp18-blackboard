@@ -1,6 +1,10 @@
-from student import Students, Student
+import argparse
+import json
+import os
+
 from grade import Grade
-import json, os, argparse
+from student import Student, Students
+
 
 def merge_gradebooks(roster_path, gradebook_path, other_gradebook_path, output_path):
     roster_file = open(roster_path, 'r')
@@ -16,10 +20,10 @@ def merge_gradebooks(roster_path, gradebook_path, other_gradebook_path, output_p
         output_file = open(output_path, 'w')
         students.makeGradeBook(output_file)
         output_file.close()
-        print "Merged gradebook saved to %s"%output_path
+        print "Merged gradebook saved to %s" % output_path
     else:
         print "Error: output file path already taken"
-    
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -39,5 +43,5 @@ if __name__ == '__main__':
                         type=str)
 
     args = parser.parse_args()
-    merge_gradebooks(args.roster_path, args.first_gradebook_path, args.second_gradebook_path, args.output_path)
-
+    merge_gradebooks(args.roster_path, args.first_gradebook_path,
+                     args.second_gradebook_path, args.output_path)
