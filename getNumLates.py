@@ -14,8 +14,8 @@ def get_num_lates(roster_path, gradebook_path, output_path=None):
     roster_file.close()
     if output_path != None:
         if not os.path.exists(output_path):
-            students.getNumLatesUpload(output_path)
-            print "NumLates upload file saved to %s" % output_path
+            students.makeUploadFile("Lates", output_path)
+            print "NumLates upload file saved to \"%s\"" % output_path
         else:
             print "Error: output file path \"%s\" already taken"%output_path
     else:

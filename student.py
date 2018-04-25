@@ -185,23 +185,7 @@ class Students():
                 ret_dict[cur_student.getWKey()] = grade
         return ret_dict
 
-    def makeUploadFile(self, form_name, output_file_name="grade_output.txt"):
-        # Build CSV file for upload to Blackboard
-        csv_data = []
-        headers = ["Username"]
-        headers.append(constants.column_ids[form_name])
-        csv_data.append(headers)
 
-        grades = self.getGrades(form_name)
-        for student_id in grades.iterkeys():
-            csv_data.append([student_id, grades[student_id]])
-        # Write lab CSV file
-        with open(output_file_name, "w") as f:
-            print "Writing %s" % output_file_name
-            csv_writer = csv.writer(f, delimiter="\t")
-            csv_writer.writerows(csv_data)
-            print "Done writing %s" % output_file_name
-    
     def getNumLates(self):
         ret_dict = {}
         for k in self.student_dict.iterkeys():
@@ -209,23 +193,30 @@ class Students():
             student_num_lates = cur_student.getNumLates()
             ret_dict[cur_student.getWKey()] = student_num_lates
         return ret_dict
+        
 
-    def getNumLatesUpload(self, output_file_name="num_lates.txt"):
+    def makeUploadFile(self, form_name, output_file_name="grade_output.txt"):
         # Build CSV file for upload to Blackboard
         csv_data = []
         headers = ["Username"]
-        headers.append(constants.column_ids["Lates"])
+        headers.append(constants.column_ids[form_name])
         csv_data.append(headers)
-
-        num_lates = self.getNumLates()
-        for student_id in num_lates.iterkeys():
-            csv_data.append([student_id, num_lates[student_id]])
+        grades = {}
+        if form_name == "Lates":
+            grades = self.getNumLates()
+            if output_file_name == "grade_output.txt":
+                output_file_name = "num_lates.txt"
+        else:
+            grades = self.getGrades(form_name)
+        for student_id in grades.iterkeys():
+            csv_data.append([student_id, grades[student_id]])
         # Write lab CSV file
         with open(output_file_name, "w") as f:
-            print "Writing %s" % output_file_name
+            print "Writing \"%s\"" % output_file_name
             csv_writer = csv.writer(f, delimiter="\t")
             csv_writer.writerows(csv_data)
-            print "Done writing %s" % output_file_name
+            print "Done writing \"%s\"" % output_file_name
+
 
     def get(self, key):
         return self.student_dict[key]

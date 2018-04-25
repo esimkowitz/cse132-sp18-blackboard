@@ -3,6 +3,7 @@
 *.xlsx
 *.csv
 *.xls
+*.txt
 studio-forms/
 assignment-forms/
 rosters/
