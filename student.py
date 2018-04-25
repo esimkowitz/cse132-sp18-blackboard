@@ -185,6 +185,14 @@ class Students():
                 ret_dict[cur_student.getWKey()] = grade
         return ret_dict
 
+    def printLateLabs(self):
+        for student_id in self.student_dict.iterkeys():
+            self.student_dict[student_id].printLateLabs()
+
+    def processLates(self):
+        for student_id in self.student_dict.iterkeys():
+            self.student_dict[student_id].processLates()
+
 
     def getNumLates(self):
         ret_dict = {}

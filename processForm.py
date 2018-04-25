@@ -240,6 +240,15 @@ def doStudios(studio_name, form_results, uuid_map):
         error("Rubric for %s is not up to date, please update the update the fields in the constants file and try again." % studio_name)
 
 
+def revert_changes(file_path, old_file_path):
+    print "Reverting to previous %s" % file_path
+    if old_file_path != None:
+        if os.path.exists(old_file_path):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            os.rename(old_file_path, file_path)
+
+
 def error(error_string, error_obj=None):
     global old_gradebook_path
     global current_gradebook_path
@@ -251,15 +260,6 @@ def error(error_string, error_obj=None):
     revert_changes(current_gradebook_path, old_gradebook_path)
     print "Exiting"
     sys.exit(0)
-
-
-def revert_changes(file_path, old_file_path):
-    print "Reverting to previous %s" % file_path
-    if old_file_path != None:
-        if os.path.exists(old_file_path):
-            if os.path.exists(file_path):
-                os.remove(file_path)
-            os.rename(old_file_path, file_path)
 
 
 def maybe_new_file(file_path):
