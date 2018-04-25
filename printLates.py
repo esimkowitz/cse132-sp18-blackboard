@@ -10,8 +10,10 @@ from student import Student, Students
 def process(roster_file, gradebook_path, wustl_key=None):
     global students
 
-    current_gradebook_path = gradebook_path
-    old_gradebook_path = None
+    if wustl_key != None:
+        print "Printing late labs for %s" % wustl_key
+    else:
+        print "Printing all late labs"
 
     gradebook_file = open(gradebook_path, 'r')
     students = Students(roster_file, gradebook_file)
@@ -20,7 +22,6 @@ def process(roster_file, gradebook_path, wustl_key=None):
     roster_file.close()
     students.processLates()
     if wustl_key != None:
-        print "Printing late labs for %s" %wustl_key
         try:
             students.get(wustl_key).printLateLabs()
         except KeyError as e:
@@ -28,7 +29,6 @@ def process(roster_file, gradebook_path, wustl_key=None):
         except Exception as e:
             raise e
     else:
-        print "Printing all lates"
         students.printLateLabs()
 
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Print out all the late assignments in the gradebook, optionally just for one student")
     parser.add_argument("-s", "--student", dest="wustl_key",
-                    help="Optional WUSTL key if just printing one student", metavar="WUSTLKEY", default=None,
+                    help="Print out lates for just the specified student", metavar="WUSTLKEY", default=None,
                     type=str)
     parser.add_argument("--roster", dest="roster_file",
                         help="Path to the class roster file", metavar="FILE", default="roster.json",
