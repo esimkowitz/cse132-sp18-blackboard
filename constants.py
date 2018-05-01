@@ -57,7 +57,10 @@ class Constants:
     for period in labCutoffs:
         for k in labCutoffs[period].iterkeys():
             labCutoffs[period][k] = tz.localize(labCutoffs[period][k])
+            # labCutoffs[period][k] += timedelta(minutes=50)
         # labCutoffs[period] = handleDST(labCutoffs[period])
+    labCutoffs["a"] = labCutoffs["c"]
+    labCutoffs["b"] = labCutoffs["c"]
     
     labNumLateDays = {
         "Assignment 1"	:	7,
@@ -140,8 +143,8 @@ class Constants:
         "Assignment 7": True,
         "Assignment 8": True,
         "Assignment 10": True,
-        "Assignment 11": False,
-        "Assignment 12": False
+        "Assignment 11": True,
+        "Assignment 12": True
     }
     labPartnerFields = {
         "Assignment 1"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6-digit number)"],
@@ -152,8 +155,8 @@ class Constants:
         "Assignment 7"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 8"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 10"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
-        "Assignment 11"	:	["", ""],
-        "Assignment 12" :   ["", ""],
+        "Assignment 11"	:	["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
+        "Assignment 12":   ["Partner 1 WUSTL ID (the 6 digit number)", "Partner 2 WUSTL ID (the 6 digit number)"],
         "Assignment 0"  :   ["", ""]
     }
     labWorkingWithPartner = {
@@ -165,8 +168,8 @@ class Constants:
         "Assignment 7"	:	"Are they working with a partner?",
         "Assignment 8"	:	"Are they working with a partner?",
         "Assignment 10"	:	"Are they working with a partner?",
-        "Assignment 11"	:	"",
-        "Assignment 12" :   "",
+        "Assignment 11"	:	"Are they working with a partner?",
+        "Assignment 12" :   "Are they working with a partner?",
         "Assignment 0"  :   ""
     }
     labCommitToGithub = {
@@ -178,8 +181,8 @@ class Constants:
         "Assignment 7"	:	"Committed to Github before demo",
         "Assignment 8"	:	"Committed to Github before demo",
         "Assignment 10"	:	"Committed to Github before demo",
-        "Assignment 11"	:	"",
-        "Assignment 12" :   "",
+        "Assignment 11"	:	"Committed to Github before demo",
+        "Assignment 12" :   "Committed to Github before demo",
         "Assignment 0"  :   ""
     }
     labTAName = {
@@ -217,8 +220,8 @@ class Constants:
         "Assignment 7"	:	"Comments/Notes",
         "Assignment 8"	:	"Comments/Notes",
         "Assignment 10"	:	"Comments/Notes",
-        "Assignment 11"	:	"",
-        "Assignment 12" :   "",
+        "Assignment 11"	:	"Comments/Notes",
+        "Assignment 12" :   "Comments/Notes",
         "Assignment 0"  :   ""
     }
     labIsRegrade = {

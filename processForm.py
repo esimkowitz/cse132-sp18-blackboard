@@ -58,6 +58,7 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     current_gradebook_path = gradebook_path
     old_gradebook_path = None
     old_gradebook_dir = "old_gradebooks"
+    grade_outputs_dir = "grade_outputs"
 
     try:
         gradebook_file = open(gradebook_path, 'r')
@@ -83,7 +84,8 @@ def process(mode, form_results_file, roster_file, gradebook_path):
     # regex = r"(?:CSE 132 (?P<semester>(?:SP|FL)[0-9]{2}) )?(?P<form_name>(?P<form_type>Assignment|Studio)( )?(?P<form_number>[0-9]+))(?:\([0-9]+\-[0-9]+\))"
     match_result = re.search(regex, form_results_file.name)
     form_type = match_result.group('form_type')
-    form_name = "%s %s" % (form_type, match_result.group('form_number'))
+    form_name = "%s %s" %(form_type, match_result.group('form_number'))
+    form_number = match_result.group('form_number')
 
     print "Processing %i entries for %s" % (len(form_results.index), form_name)
 
@@ -104,7 +106,11 @@ def process(mode, form_results_file, roster_file, gradebook_path):
         gradebook_file = open(gradebook_path, 'w')
         students.makeGradeBook(gradebook_file)
         gradebook_file.close()
-        students.makeUploadFile(form_name)
+        if not os.path.exists(grade_outputs_dir):
+            os.mkdir(grade_outputs_dir)
+        upload_filename = "%s/%s_%s_output.txt" % (
+            grade_outputs_dir, form_type.lower(), form_number)
+        students.makeUploadFile(form_name, upload_filename)
 
     except Exception as e:
         form_results_file.close()

@@ -59,7 +59,7 @@ class Student:
                         self.grades[lab].setIsZero(True)
                 else:
                     # add this number to gradebook, so student can see how many
-                    if(self.grades[lab].getIsLate() == False):
+                    if (self.grades[lab].getIsLate() == False) and lab_is_regrade != True:
                         self.grades[lab].setIsLate(True)
 
                         # print "Late lab for %s on %s" % (self.wkey, lab)
@@ -75,7 +75,10 @@ class Student:
                             self.grades[lab].setIsZero(False)
 
                 num_lates_counted += 1
-
+            else:
+                if lab_is_regrade != True:
+                        self.grades[lab].setIsZero(False)
+                        self.grades[lab].setIsLate(False)
     def getSection(self):
         return self.section
 

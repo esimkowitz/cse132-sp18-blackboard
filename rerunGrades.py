@@ -18,6 +18,7 @@ def process(assignment_number, roster_file, gradebook_path):
     current_gradebook_path = gradebook_path
     old_gradebook_path = None
     old_gradebook_dir = "old_gradebooks"
+    grade_outputs_dir = "grade_outputs"
 
     try:
         gradebook_file = open(gradebook_path, 'r')
@@ -39,7 +40,10 @@ def process(assignment_number, roster_file, gradebook_path):
         gradebook_file = open(gradebook_path, 'w')
         students.makeGradeBook(gradebook_file)
         gradebook_file.close()
-        students.makeUploadFile(form_name)
+        if not os.path.exists(grade_outputs_dir):
+            os.mkdir(grade_outputs_dir)
+        upload_filename = "%s/assignment_%i_output.txt"%(grade_outputs_dir, assignment_number)
+        students.makeUploadFile(form_name, upload_filename)
     except Exception as e:
         error("Unexpected error", e)
 
