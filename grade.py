@@ -44,14 +44,8 @@ class Grade:
     def getPoints(self):
         return self.points
 
-    def setPoints(self, points):
-        self.points = points
-
     def getIsLate(self):
         return self.isLate
-
-    def setIsLate(self, isLate):
-        self.isLate = isLate
 
     def getTimestamp(self):
         return self.timestamp
@@ -70,24 +64,18 @@ class Grade:
 
     def getIsZero(self):
         return self.isZero
+    
+    def getHistory(self):
+        return self.history
+    
+    def setPoints(self, points):
+        self.points = points
+
+    def setIsLate(self, isLate):
+        self.isLate = isLate
 
     def setIsZero(self, isZero):
         self.isZero = isZero
-
-    def regrade(self, new_grade):
-        self.history.append(Grade(self.name, self.points, self.kind, self.timestamp,
-                                  self.grader, self.notes, self.isRegrade, self.isLate, self.isZero))
-        self.name = new_grade.getName()
-        self.points = new_grade.getPoints()
-        self.timestamp = new_grade.getTimestamp()
-        self.isRegrade = True
-        self.grader = new_grade.getGrader()
-        self.notes = new_grade.getNotes()
-        self.isLate = new_grade.getIsLate() and self.getIsLate()
-        self.isZero = new_grade.isZero and self.isZero
-
-    def getHistory(self):
-        return self.history
 
     def addHistory(self, old_grade):
         self.history.append(old_grade)

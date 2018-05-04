@@ -19,11 +19,10 @@ class Student:
         if not grade.name in self.grades.iterkeys():
             self.grades[grade.name] = grade
         elif self.grades[grade.name].getIsRegrade() is True:
-            # self.grades[grade.name].regrade(grade)
+            # The grade has been manually changed in the gradebook, ignore all attempted updates
             pass
         elif grade.getTimestamp() == self.grades[grade.name].getTimestamp():
             old_grade_is_late = self.grades[grade.name].getIsLate()
-            # old_grade_is_regrade = self.grades[grade.name].getIsRegrade()
             self.grades[grade.name] = grade
             self.grades[grade.name].setIsLate(old_grade_is_late)
         else:
@@ -47,6 +46,10 @@ class Student:
         for lab in sorted_labs:
             lab_deadline = constants.labCutoffs[self.section][lab]
             lab_sub_time = labs[lab].getTimestamp()
+
+            # If lab_is_regrade is True, the grade has been manually changed in the gradebook
+            # The processLates function will only make changes to grades that haven't been 
+            # manually changed (i.e. where lab_is_regrade is False)
             lab_is_regrade = labs[lab].getIsRegrade()
 
             # Uncomment below for debugging
@@ -77,8 +80,8 @@ class Student:
                 num_lates_counted += 1
             else:
                 if lab_is_regrade != True:
-                        self.grades[lab].setIsZero(False)
-                        self.grades[lab].setIsLate(False)
+                    self.grades[lab].setIsZero(False)
+                    self.grades[lab].setIsLate(False)
     def getSection(self):
         return self.section
 
